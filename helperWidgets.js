@@ -12,16 +12,14 @@ var ColorScale = function(minimum, maximum){
 
 //Tooltip
 var Tooltip = function(domObject, position, domParent){
-	var tooltipPosition;
+	var tooltipPosition = {};
 	var parentPosition = domParent.getBoundingClientRect(domParent);
-	
+	var tooltip;
 	var addTooltip = function(position){
-		console.log(domObject)
-		d3.select('body')
+		tooltip = d3.select('body')
 			.append(function(){return domObject})
 			.style('position', 'absolute')
 			.style('background-color', 'white')
-			.style('min-width',parentPosition.width)
 			.style('top', position.top)
 			.style('left', position.left);
 	}
@@ -32,9 +30,21 @@ var Tooltip = function(domObject, position, domParent){
 		document.body.removeChild(domObject);
 	};
 	switch(position){
-		case 'over': 
+		case 'covering': 
 			addTooltip(parentPosition);
+			tooltip.style('min-width',parentPosition.width)
+				.style('min-height', parentPosition.height);
 		break;
+		case 'over': 
+			tooltipPosition.top = parentPosition.top+parentPosition.height/2
+			tooltipPosition.left = parentPosition.left+parentPosition.width/2
+			addTooltip(tooltipPosition);
+		break;
+		case 'below':
+			tooltipPosition.top = parentPosition.top+parentPosition.height;
+			tooltipPosition.left = parentPosition.left;
+			addTooltip(tooltipPosition);
+			break;
 		
 		
 	}

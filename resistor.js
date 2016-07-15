@@ -1,5 +1,5 @@
 var Resistor = function(label,startNode,endNode,resistance,domParent){
-	
+	var resistor = this;
 	this.label = label;
 	this.startNode = startNode;
 	this.endNode = endNode;
@@ -7,8 +7,10 @@ var Resistor = function(label,startNode,endNode,resistance,domParent){
 	this.domParent = domParent;
 	var l = app.resistorLength;
 	var W = app.resistorMaxWidth;
-	var w = (W - Math.pow(W,1-resistance/app.resistanceScale))/2;
-	if(isNaN(w)){w = 20};
+
+	var w = function(){
+		 return 0.01+(W - Math.pow(W,1-resistance.value.element/app.resistanceScale))/2;
+	}
 	var n = app.resistorN;
 	var x1 = startNode.position.x;
 	var x2 = endNode.position.x;
@@ -17,8 +19,34 @@ var Resistor = function(label,startNode,endNode,resistance,domParent){
 	var g1; // start of gradient; second point on spring 
 	var g2; // end of gradient; second to last point on spring
 	var diagram;
-	var startColor = app.voltageScale.getColor(startNode.voltage.value);
-	var endColor = app.voltageScale.getColor(endNode.voltage.value);
+	
+	var widthUpdate = function(){
+		width.element = w();
+
+		diagram.attr("d", lineFunction(calcPath(width.element,l,n,x1,y1,x2,y2)))
+	}
+	var width = new Hook(w(), this, widthUpdate);
+
+	width.subscribe(this.resistance.value);
+	
+	var updateStartColor = function(){
+		var newColor = app.voltageScale.getColor(this.parent.startNode.voltage.value.element);
+		this.element = newColor;
+		startStop.attr("stop-color", newColor);
+	}
+	
+	var updateEndColor = function(){
+		var newColor = app.voltageScale.getColor(this.parent.endNode.voltage.value.element);
+		this.element = newColor;
+		endStop.attr("stop-color", newColor);
+	}
+	
+	
+	var startColor = new Hook(app.voltageScale.getColor(startNode.voltage.value.element), this, updateStartColor);
+	startColor.subscribe(this.startNode.voltage.value);
+	
+	var endColor = new Hook(app.voltageScale.getColor(endNode.voltage.value.element), this, updateEndColor);
+	endColor.subscribe(this.endNode.voltage.value);
 	
 	var calcPath = function(w,l,n,x1,y1,x2,y2){
 		var L = Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2));
@@ -34,6 +62,7 @@ var Resistor = function(label,startNode,endNode,resistance,domParent){
 				{x:(L-l)/(2*L)*(x2-x1)+x1+i*dx+0.75*dx-vx,y:(L-l)/(2*L)*(y2-y1)+y1+i*dy+0.75*dy-vy});
 		}
 		data.push(g2,{x:x2,y:y2})
+		
 		return data;
 	}
 	
@@ -45,11 +74,13 @@ var Resistor = function(label,startNode,endNode,resistance,domParent){
 
 	this.addDomObject = function(){
 		
-		diagram = d3.select(this.domParent).append("path")
-			.attr("d", lineFunction(calcPath(w,l,n,x1,y1,x2,y2)))
+		diagram = d3.select(this.domParent).insert("path", ":first-child")
+			.attr("d", lineFunction(calcPath(width.element,l,n,x1,y1,x2,y2)))
 			.attr("stroke", 'url(#'+this.label+'gradient)')
 			.attr("stroke-width", 4)
-			.attr("fill", "none");
+			.attr("fill", "white")
+			.attr('fill-opacity', 0.0)
+			.style('cursor', 'pointer');
 
 	}
 	this.addDomObject();
@@ -66,22 +97,32 @@ var Resistor = function(label,startNode,endNode,resistance,domParent){
 		.append('linearGradient')
 		.attr('id', this.label+"gradient");
 		
-	gradient.append('stop')
+	var startStop = gradient.append('stop')
 		.attr('class','firstStop')
 		.attr('offset','0%')
-		.attr('stop-color', startColor);
+		.attr('stop-color', startColor.element);
 		
-	gradient.append('stop')
+	var endStop = gradient.append('stop')
 		.attr('class','lastStop')
 		.attr('offset','100%')
-		.attr('stop-color', endColor);
+		.attr('stop-color', endColor.element);
 	
 	gradient.attr('x1',gradStartX)
 		.attr('y1',gradStartY)
 		.attr('x2',gradEndX)
 		.attr('y2',gradEndY);
 		
+	diagramClickHandler = function(){
+		var resistanceTooltipDisplay = document.createElement('span');
+		var resistanceTooltip = new Tooltip(resistanceTooltipDisplay, 'over', this)
+		resistor.resistance.addDomObject(resistanceTooltipDisplay);
+		var documentClickHandler = function(){
+			resistanceTooltip.closeTooltip();
+			document.removeEventListener('mousedown', documentClickHandler);
+		}
+		document.addEventListener('mousedown', documentClickHandler)
+	}
 	
-		
+	diagram.on('click', diagramClickHandler);	
 	
 }
