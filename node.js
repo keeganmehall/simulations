@@ -17,6 +17,7 @@ var Node = function(label,position, voltage ,domParent){
 	}*/
 	
 	var updateColor = function(){
+		//console.log('updating color'+label);
 		var newColor = app.voltageScale.getColor(this.parent.voltage.value.element);
 		this.element = newColor;
 		this.parent.domObjects.forEach(function(dot){

@@ -35,6 +35,7 @@ var Component = function(input){
 	var diagram;
 	
 	var widthUpdate = function(){
+		//console.log('updating component '+this.label+' width')
 		width.element = w();
 
 		diagram.attr("d", lineFunction(calcPath(width.element,l,n,x1,y1,x2,y2)))
@@ -49,12 +50,14 @@ var Component = function(input){
 	
 	
 	var updateStartColor = function(){
+		//console.log('updating component '+component.label+' start color')
 		var newColor = app.voltageScale.getColor(this.parent.startNode.voltage.value.element);
 		this.element = newColor;
 		startStop.attr("stop-color", newColor);
 	}
 	
 	var updateEndColor = function(){
+		//console.log('updating component '+component.label+' end color')
 		var newColor = app.voltageScale.getColor(this.parent.endNode.voltage.value.element);
 		this.element = newColor;
 		endStop.attr("stop-color", newColor);
@@ -120,16 +123,16 @@ var Component = function(input){
 			var dy = l/n*(y2-y1)/L;
 			var vx = w*(y2-y1)/L
 			var vy = w*(x1-x2)/L
-			console.log(x1,x2);
+			//console.log(x1,x2);
 			g1 = {x:(L-l)/(2*L)*(x2-x1)+x1, y:(L-l)/(2*L)*(y2-y1)+y1}
 			g2 = {x:x2-(L-l)/(2*L)*(x2-x1), y:y2-(L-l)/(2*L)*(y2-y1)}
 			var data = [{x:x1,y:y1}, g1]
-			/*for(i=0; i<n; i++){
+			for(i=0; i<n; i++){
 				data.push({x:(L-l)/(2*L)*(x2-x1)+x1+i*dx+0.25*dx+vx,y:(L-l)/(2*L)*(y2-y1)+y1+i*dy+0.25*dy+vy},
 					{x:(L-l)/(2*L)*(x2-x1)+x1+i*dx+0.75*dx-vx,y:(L-l)/(2*L)*(y2-y1)+y1+i*dy+0.75*dy-vy});
-			}*/
+			}
 			data.push(g2,{x:x2,y:y2});
-			console.log(data);
+			//console.log(data);
 		
 			return data;
 		}
@@ -180,7 +183,7 @@ var Component = function(input){
 		diagramClickHandler = function(){
 			var resistanceTooltipDisplay = document.createElement('span');
 			var resistanceTooltip = new Tooltip(resistanceTooltipDisplay, 'over', this)
-			component.resistance.addDomObject(parameterTooltipDisplay);
+			component.resistance.addDomObject(resistanceTooltipDisplay);
 			var documentClickHandler = function(){
 				resistanceTooltip.closeTooltip();
 				document.removeEventListener('mousedown', documentClickHandler);

@@ -21,6 +21,7 @@ var Resistor = function(label,startNode,endNode,resistance,domParent){
 	var diagram;
 	
 	var widthUpdate = function(){
+		//console.log('updating component '+label+' width');
 		width.element = w();
 
 		diagram.attr("d", lineFunction(calcPath(width.element,l,n,x1,y1,x2,y2)))
@@ -30,12 +31,14 @@ var Resistor = function(label,startNode,endNode,resistance,domParent){
 	width.subscribe(this.resistance.value);
 	
 	var updateStartColor = function(){
+		//console.log('updating component '+label+' start color');
 		var newColor = app.voltageScale.getColor(this.parent.startNode.voltage.value.element);
 		this.element = newColor;
 		startStop.attr("stop-color", newColor);
 	}
 	
 	var updateEndColor = function(){
+		//console.log('updating component '+label+' end color')
 		var newColor = app.voltageScale.getColor(this.parent.endNode.voltage.value.element);
 		this.element = newColor;
 		endStop.attr("stop-color", newColor);

@@ -1,5 +1,6 @@
 var Quantity = function(label, initialValue) {
 	var updateValue = function(){
+		//console.log('updating quantity '+label);
 		//eventually update value if tooltip is open
 	}
 	this.value = new Hook(initialValue, this, updateValue);
