@@ -16,11 +16,10 @@ var Hook = function(value, parent, update){
 	}
 	var sorted = false;
 	this.set = function(newValue){
-	
 		this.element = newValue;
 		if(!sorted){
 			topoSort(this);
-			//sorted = true;
+			sorted = true;
 		}
 		for(var i = stack.length-1; i>=0; i-=1){
 			stack[i].update();

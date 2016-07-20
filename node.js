@@ -54,7 +54,7 @@ var Node = function(label,position, voltage ,domParent){
 	dotClickHandler = function(){
 		var voltageTooltipDisplay = document.createElement('span');
 		var voltageTooltip = new Tooltip(voltageTooltipDisplay, 'below', this)
-		node.voltage.addDomObject(voltageTooltipDisplay);
+		voltageTooltipDisplay.appendChild(node.voltage.addDisplay());
 		var documentClickHandler = function(){
 			voltageTooltip.closeTooltip();
 			document.removeEventListener('mousedown', documentClickHandler);

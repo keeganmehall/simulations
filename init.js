@@ -4,12 +4,11 @@ app.resistorMaxWidth = 30;
 app.resistanceScale = 10;
 app.resistorN = 3;
 
-
 window.onload = function(){
 //Quantity
 var quanDisplay = document.getElementById('quan');
 //var massQuan = new Quantity('m', 5)
-//massQuan.addDomObject()
+
 
 
 //circuit
@@ -17,14 +16,14 @@ var quanDisplay = document.getElementById('quan');
 var circuitDiagram = document.getElementById("circuitDiagram");
 
 var time = new Quantity('t',0);
-time.addDomObject(quanDisplay);
+
 
 var va = new Quantity('Va', 10);
-//va.addDomObject(quanDisplay);
+
 var vb = new Quantity('Vb', 0);
-//vb.addDomObject(quanDisplay);
+
 var vc = new Quantity('Vc', 10);
-//vc.addDomObject(quanDisplay);
+
 
 var nodeA = new Node("nodeA", {x:20,y:20}, va, circuitDiagram);
 
@@ -34,11 +33,11 @@ var nodeC = new Node("nodeC", {x:280,y:280}, vc, circuitDiagram);
 
 //resistor
 var r1 = new Quantity('r1', 2);
-//r1.addDomObject(quanDisplay);
+
 var r2 = new Quantity('R', 5);
-//r2.addDomObject(quanDisplay);
+
 var c1 = new Quantity('C', 3);
-//c1.addDomObject(quanDisplay);
+
 
 var cap1Input = {label:'capacitor1', type:'capacitor', startNode:nodeB, endNode:nodeC, capacitance:c1, domParent:circuitDiagram}
 var resistor2Input = {label:'resistor2', type:'resistor', startNode:nodeA , endNode:nodeB, resistance:r2, domParent:circuitDiagram}
@@ -55,9 +54,15 @@ var mainCircuit = new RCCircuit({sourceFunction:sourceFunction, middle:nodeB, gr
 var diffEqInput = {time:time.value, circuit:mainCircuit}
 var diffEq = new Integrate(diffEqInput);
 
-var playbackSpeed = new Quantity('Playback', 0);
+var playbackSpeed = new Quantity('Playback Speed', 1);
 
-d3.select(quanDisplay).append('span').text('   ')
-playbackSpeed.addDomObject(quanDisplay);
-var animation = new Animation(time, playbackSpeed);
+quan.appendChild(time.addDisplay());
+d3.select(quanDisplay).append('span').text('   ');
+var playbackToggle = new Bool(false);
+quan.appendChild(playbackToggle.addToggle('Play', 'Pause'));
+d3.select(quanDisplay).append('span').text('   ');
+quanDisplay.appendChild(playbackSpeed.addDisplay());
+quan.appendChild(time.addDisplay());
+
+var animation = new Animation(time, playbackSpeed, playbackToggle);
 }
