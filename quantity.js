@@ -24,7 +24,6 @@ var Quantity = function(label, initialValue) {
 		
 		var valueFocusHandler = function(){
 			
-			d3.select(this).on('blur', blurHandler);
 			for(var i=0; i<quan.displays.length;i++){
 				quan.displays[i].valueDisplay.removeEventListener('mouseleave', mouseLeaveHandler);
 			}
@@ -74,7 +73,6 @@ var Quantity = function(label, initialValue) {
 		}
 		
 		var blurHandler = function(){ //on valueDisplay
-			
 			for(var i=0; i<quan.displays.length;i++){
 				quan.displays[i].valueTooltip.closeTooltip();
 				if(quan.displays[i].sliderTooltip){
