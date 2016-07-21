@@ -84,16 +84,16 @@ var Quantity = function(label, initialValue) {
 			}
 			
 			if(inputChanged){
-				var newValue = parseFloat(valueDisplay.textContent)
+				var newValue = parseFloat(display.valueDisplay.textContent)
 				if(!isNaN(newValue)){
 					quan.value.set(newValue);
 				}
 			}
 		}
 		
-		var keyDownHandler = function(key){
-			if(d3.event.keyCode === 13){
-				valueDisplay.blur();
+		var keyDownHandler = function(e){
+			if(e.keyCode === 13){
+				display.valueDisplay.blur();
 			}
 		}
 		
@@ -116,6 +116,7 @@ var Quantity = function(label, initialValue) {
 		display.valueDisplay.addEventListener('keydown', keyDownHandler);
 		display.valueDisplay.contentEditable = 'true';
 		display.valueDisplay.addEventListener('focus', valueFocusHandler);
+		display.valueDisplay.addEventListener('blur', blurHandler);
 			
 			
 		var createSlider = function(){
@@ -123,6 +124,7 @@ var Quantity = function(label, initialValue) {
 			
 			slider
 				.style('width', '100px')
+				.style('background-color', 'white')
 				.call(
 					d3.slider()
 						.value(quan.value.element)
