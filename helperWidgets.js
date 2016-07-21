@@ -14,29 +14,22 @@ var ColorScale = function(minimum, maximum){
 var Tooltip = function(domObject, position, domParent){
 	var tooltip = this;
 	var tooltipPosition = {};
-	var parentPosition = domParent.getBoundingClientRect(domParent);
-	tooltip.domObject = domObject;
+	var parentPosition = domParent.getBoundingClientRect();
+	this.domObject = domObject;
 	var newTooltip;
 	var addTooltip = function(position){
-		console.log('adding tooltip at ',position.left);
-		console.log(domObject);
-		d3.select('body')
-			.append(function(){return domObject})
-			.style('position', 'absolute')
-			.style('background-color', 'white')
-			.style('top', position.top)
-			.style('left', position.left);
-		domObject.style.visibility = 'visible';
+		document.body.appendChild(domObject);
+		domObject.style.position = 'absolute';
+		domObject.style.backgroundColor = 'white';
+		domObject.style.top = position.top;
+		domObject.style.left = position.left;
 		
 	}
 	
-	this.updatePosition= function(){};
-	this.showTooltip = function(){
-		domObject.style.visibility = 'visible';
-	}
+	
 	
 	this.closeTooltip = function(){
-		domObject.style.visibility = 'hidden';
+		document.body.removeChild(domObject)
 	};
 	switch(position){
 		case 'covering': 
@@ -103,17 +96,15 @@ var Animation = function(parameter, playbackSpeed, running){
 		var tw0 = performance.now()/1000;	//world time
 		
 		var step = function(timeMS){
-			setTimeout(function(){
-				if(running.value.element){
-					var factor = playbackSpeed.value.element;
-					var tw = timeMS/1000;
-					var tm = factor*(tw-tw0)+tm0
-					parameter.value.set(tm)
-					if(tm < 30){
-						window.requestAnimationFrame(step);
-					} else{running.value.set(false)}
-				}
-			}, 1000);	
+			if(running.value.element){
+				var factor = playbackSpeed.value.element;
+				var tw = timeMS/1000;
+				var tm = factor*(tw-tw0)+tm0
+				parameter.value.set(tm)
+				if(tm < 30){
+					window.requestAnimationFrame(step);
+				} else{running.value.set(false)}
+			}
 		}
 		var anim = window.requestAnimationFrame(step);
 	}

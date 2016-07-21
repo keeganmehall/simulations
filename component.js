@@ -181,10 +181,9 @@ var Component = function(input){
 		.attr('y2',gradEndY);
 		
 	if(this.type === 'resistor'){
+		var resistanceTooltipDisplay = component.resistance.addDisplay();
 		diagramClickHandler = function(){
-			var resistanceTooltipDisplay = document.createElement('span');
-			var resistanceTooltip = new Tooltip(resistanceTooltipDisplay, 'over', this)
-			component.resistance.addDomObject(resistanceTooltipDisplay);
+			var resistanceTooltip = new Tooltip(resistanceTooltipDisplay, 'over', this);
 			var documentClickHandler = function(){
 				resistanceTooltip.closeTooltip();
 				document.removeEventListener('mousedown', documentClickHandler);
@@ -192,10 +191,9 @@ var Component = function(input){
 			document.addEventListener('mousedown', documentClickHandler)
 		}
 	}else if(this.type === 'capacitor'){
+		var capacitanceTooltipDisplay = component.capacitance.addDisplay();
 		diagramClickHandler = function(){
-			var capacitanceTooltipDisplay = document.createElement('span');
-			var capacitanceTooltip = new Tooltip(capacitanceTooltipDisplay, 'over', this)
-			component.capacitance.addDomObject(capacitanceTooltipDisplay);
+			var capacitanceTooltip = new Tooltip(capacitanceTooltipDisplay, 'over', this);
 			var documentClickHandler = function(){
 				capacitanceTooltip.closeTooltip();
 				document.removeEventListener('mousedown', documentClickHandler);

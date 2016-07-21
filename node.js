@@ -51,10 +51,10 @@ var Node = function(label,position, voltage ,domParent){
 	}
 	this.addDomObject();
 	
+	var voltageTooltipDisplay = node.voltage.addDisplay();
+	
 	dotClickHandler = function(){
-		var voltageTooltipDisplay = document.createElement('span');
 		var voltageTooltip = new Tooltip(voltageTooltipDisplay, 'below', this)
-		voltageTooltipDisplay.appendChild(node.voltage.addDisplay());
 		var documentClickHandler = function(){
 			voltageTooltip.closeTooltip();
 			document.removeEventListener('mousedown', documentClickHandler);
