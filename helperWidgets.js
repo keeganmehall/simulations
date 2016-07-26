@@ -1,20 +1,38 @@
 //ColorScale
-var ColorScale = function(minimum, maximum){
-	this.min = minimum
-	this.max = maximum
+/*var Scale = function(minimum, maximum){
+	var scale = this;
+	this.min = minimum;
+	this.max = maximum;
+	var min = minimum.value.element;
+	var max = maximum.value.element;
 	this.getColor = function(value){
-		var blue = Math.round(255*(1-(value - this.min)/(this.max-this.min)));
-		var red = Math.round(255*(value - this.min)/(this.max-this.min));
-	return(d3.rgb(red,0,blue));
+		var blue = Math.round(255*(1-(value - min)/(max-min)));
+		var red = Math.round(255*(value - min)/(max-min));
+		return(d3.rgb(red,0,blue));
 	}
-}
+	var updateScale = function(){
+		min = minimum.value.element;
+		max = maximum.value.element;
+	}
+	this.scaleUpdate = new Hook('null', this, updateScale); 
+	this.scaleUpdate.subscribe(minimum.value);
+	this.scaleUpdate.subscribe(maximum.value);
+	
+	this.addAxis = function(){
+	}
+}*/
 
 
 //Tooltip
 var Tooltip = function(domObject, position, domParent){
 	var tooltip = this;
 	var tooltipPosition = {};
-	var parentPosition = domParent.getBoundingClientRect();
+	var parentPosition = {};
+	var boundingClientRect = domParent.getBoundingClientRect();
+	parentPosition.top = boundingClientRect.top + window.pageYOffset;
+	parentPosition.left = boundingClientRect.left + window.pageXOffset;
+	parentPosition.width = boundingClientRect.width;
+	parentPosition.height = boundingClientRect.height;
 	this.domObject = domObject;
 	var newTooltip;
 	var addTooltip = function(position){
@@ -62,15 +80,22 @@ var Integrate = function(input){
 	this.input = input;
 	var solve = function(){
 		var f = input.circuit.equation.element;
-		this.element = numeric.dopri(0,30,[0],f,1e-6,2000);//input.circuit.middle.voltage.value.element
+		this.element = numeric.dopri(0,30,[0],f,1e-6,2000);//input.circuit.middle.voltage.value.element,,,,,,,,,,,,,,input.time.scale().min.value.element,input.time.scale().max.value.element
 		//for(var i = 0; i < this.element.y.length; i++){
 		//	console.log(this.element.y[i][0]);
 		//}
 		//console.log([this.element.at(0)[0],this.element.at(3.3)[0],this.element.at(6.7)[0],this.element.at(10)[0]])
 	}
-	this.solution = new Hook(null, null, solve);
-	this.solution.subscribe(input.circuit.equation)
+	var solution = new Hook(null, null, solve);
+	this.solution = solution;
+	this.solution.subscribe(input.circuit.equation);
+	//this.solution.subscribe(input.time.scale().min.value);
+	//this.solution.subscribe(input.time.scale().max.value);
 	this.solution.update();
+	//console.log(this.circuit.dependentVariables);
+	input.circuit.dependentVariables.forEach(function(variable){
+		variable.dependsOn.push({independent:input.time, func:solution});
+	})
 	
 	var evaluate = function(){
 		var t = input.time.element;
@@ -94,14 +119,14 @@ var Animation = function(parameter, playbackSpeed, running){
 	var updatePlayback = function(){
 		var tm0 = parameter.value.element;	//model time
 		var tw0 = performance.now()/1000;	//world time
-		
+		var stopValue = parameter.scale().max.value.element;
 		var step = function(timeMS){
 			if(running.value.element){
 				var factor = playbackSpeed.value.element;
 				var tw = timeMS/1000;
 				var tm = factor*(tw-tw0)+tm0
 				parameter.value.set(tm)
-				if(tm < 30){
+				if(tm < stopValue){
 					window.requestAnimationFrame(step);
 				} else{running.value.set(false)}
 			}

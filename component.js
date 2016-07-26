@@ -66,9 +66,11 @@ var Component = function(input){
 	
 	var startColor = new Hook(app.voltageScale.getColor(this.startNode.voltage.value.element), this, updateStartColor);
 	startColor.subscribe(this.startNode.voltage.value);
+	startColor.subscribe(app.voltageScale.scaleUpdate);
 	
 	var endColor = new Hook(app.voltageScale.getColor(this.endNode.voltage.value.element), this, updateEndColor);
 	endColor.subscribe(this.endNode.voltage.value);
+	endColor.subscribe(app.voltageScale.scaleUpdate);
 	
 	var calcPath;
 	

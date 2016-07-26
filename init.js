@@ -1,42 +1,59 @@
-var app = {voltageScale: new ColorScale(0,10)};
-app.resistorLength = 120;
-app.resistorMaxWidth = 30;
-app.resistanceScale = 10;
-app.resistorN = 3;
+var maxVoltage = new Quantity('VMax', 10, 'V');
+var minVoltage = new Quantity('VMin', 0, 'V');
+var app = {voltageScale: new Scale(minVoltage,maxVoltage)};
 
 window.onload = function(){
 //Quantity
 var quanDisplay = document.getElementById('quan');
-//var massQuan = new Quantity('m', 5)
 
+var startTime = new Quantity('tMin', 0, 's', null);
+var endTime = new Quantity('tMax', 30, 's', null);
+var timeScale = new Scale(startTime, endTime);
+
+
+/*
+
+
+var plotXMin = new Quantity('x min', 0);
+var plotXMax = new Quantity('x max', 100);
+app.voltageScale.addAxis(document.getElementById('plot'), {x:30, y:410}, 400, 'up');
+var plotYMin = new Quantity('x min', 0);
+var plotYMax = new Quantity('x max', 100);
+timeScale.addAxis(document.getElementById('plot'), {x:30, y:410}, 400, 'right');
+*/
 
 
 //circuit
 
+
 var circuitDiagram = document.getElementById("circuitDiagram");
 
-var time = new Quantity('t',0);
+var time = new Quantity('t',0, 's', timeScale);
 
+//voltages
+var va = new Quantity('Va', 10, 'V', app.voltageScale);
+var vb = new Quantity('Vb', 0, 'V', app.voltageScale);
+var vc = new Quantity('Vc', 10, 'V', app.voltageScale);
 
-var va = new Quantity('Va', 10);
-
-var vb = new Quantity('Vb', 0);
-
-var vc = new Quantity('Vc', 10);
-
-
+//nodes
 var nodeA = new Node("nodeA", {x:20,y:20}, va, circuitDiagram);
-
 var nodeB = new Node("nodeB", {x:280,y:20}, vb, circuitDiagram);
-
 var nodeC = new Node("nodeC", {x:280,y:280}, vc, circuitDiagram);
 
 //resistor
-var r1 = new Quantity('r1', 2);
+var minResist = new Quantity('null', 0, 'Ohm');
+var maxResist = new Quantity('null', 10, 'Ohm');
+var resistanceScale = new Scale(minResist, maxResist);
 
-var r2 = new Quantity('R', 5);
+var minCap = new Quantity('null', 0, 'F');
+var maxCap = new Quantity('null', 10, 'F');
+var capacitanceScale = new Scale(minCap, maxCap);
 
-var c1 = new Quantity('C', 3);
+var r1 = new Quantity('r1', 2, 'Ohm', resistanceScale);
+var r2 = new Quantity('R', 5, 'Ohm', resistanceScale);
+var c1 = new Quantity('C', 3, 'F', resistanceScale);
+
+
 
 
 var cap1Input = {label:'capacitor1', type:'capacitor', startNode:nodeB, endNode:nodeC, capacitance:c1, domParent:circuitDiagram}
@@ -54,6 +71,13 @@ var mainCircuit = new RCCircuit({sourceFunction:sourceFunction, middle:nodeB, gr
 var diffEqInput = {time:time.value, circuit:mainCircuit}
 var diffEq = new Integrate(diffEqInput);
 
+
+//plot
+new Plot(document.getElementById('plot'), time, vb);
+
+
+
+
 var playbackSpeed = new Quantity('Playback Speed', 1);
 
 quan.appendChild(time.addDisplay());
@@ -62,7 +86,15 @@ var playbackToggle = new Bool(false);
 quan.appendChild(playbackToggle.addToggle('Play', 'Pause'));
 d3.select(quanDisplay).append('span').text('   ');
 quanDisplay.appendChild(playbackSpeed.addDisplay());
+d3.select(quanDisplay).append('span').text('   ');
 quan.appendChild(time.addDisplay());
+d3.select(quanDisplay).append('span').text('   ');
+
+quanDisplay.appendChild(minVoltage.addDisplay());
+d3.select(quanDisplay).append('span').text('   ');
+quanDisplay.appendChild(maxVoltage.addDisplay());
+
+
 
 var animation = new Animation(time, playbackSpeed, playbackToggle);
 }

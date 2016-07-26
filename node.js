@@ -17,7 +17,6 @@ var Node = function(label,position, voltage ,domParent){
 	}*/
 	
 	var updateColor = function(){
-		//console.log('updating color'+label);
 		var newColor = app.voltageScale.getColor(this.parent.voltage.value.element);
 		this.element = newColor;
 		this.parent.domObjects.forEach(function(dot){
@@ -28,6 +27,7 @@ var Node = function(label,position, voltage ,domParent){
 	this.color = new Hook('black', this, updateColor);
 	this.color.update();
 	this.color.subscribe(this.voltage.value);
+	this.color.subscribe(app.voltageScale.scaleUpdate);
 	
 	/*this.voltage.update = function(){
 		console.log(this.voltage);
