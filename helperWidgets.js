@@ -80,7 +80,7 @@ var Integrate = function(input){
 	this.input = input;
 	var solve = function(){
 		var f = input.circuit.equation.element;
-		this.element = numeric.dopri(0,30,[0],f,1e-6,2000);//input.circuit.middle.voltage.value.element,,,,,,,,,,,,,,input.time.scale().min.value.element,input.time.scale().max.value.element
+		this.element = numeric.dopri(input.time.scale().min.value.element,input.time.scale().max.value.element,[0],f,1e-6,2000);//input.circuit.middle.voltage.value.element
 		//for(var i = 0; i < this.element.y.length; i++){
 		//	console.log(this.element.y[i][0]);
 		//}
@@ -89,8 +89,8 @@ var Integrate = function(input){
 	var solution = new Hook(null, null, solve);
 	this.solution = solution;
 	this.solution.subscribe(input.circuit.equation);
-	//this.solution.subscribe(input.time.scale().min.value);
-	//this.solution.subscribe(input.time.scale().max.value);
+	this.solution.subscribe(input.time.scale().min.value);
+	this.solution.subscribe(input.time.scale().max.value);
 	this.solution.update();
 	//console.log(this.circuit.dependentVariables);
 	input.circuit.dependentVariables.forEach(function(variable){
@@ -98,14 +98,14 @@ var Integrate = function(input){
 	})
 	
 	var evaluate = function(){
-		var t = input.time.element;
+		var t = input.time.value.element;
 		this.element = diffEq.solution.element.at(t)[0];
 		input.circuit.dependentVariable.element = diffEq.evaluation.element;
 		//console.log('Voltage: ',this.element, ' Resistance: ', diffEq.input.circuit.resistance.value.element, ' Capacitance: ', diffEq.input.circuit.capacitance.value.element);
 	}
 	
 	this.evaluation = new Hook(null, null, evaluate);
-	this.evaluation.subscribe(input.time);
+	this.evaluation.subscribe(input.time.value);
 	this.evaluation.subscribe(this.solution);
 	input.circuit.dependentVariable.subscribe(this.evaluation);
 }

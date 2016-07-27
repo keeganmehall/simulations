@@ -16,19 +16,25 @@ var Quantity = function(label, initialValue, unit, scale) {
 	this.dependsOn = []
 	this.functionOf = function(indVar){
 		for(var i = 0; i<quan.dependsOn.length; i++){
-			if(this.dependsOn[i].independent = indVar){
+			if(this.dependsOn[i].independent === indVar){
 				return this.dependsOn[i].func;
 			}
 		}
 	};
 	this.valuesVisible = false;
 	this.displays = [];
+	
+	this.linkedQuantities = [];
+	
 	var updateValue = function(){
 		for(var i=0;i<quan.displays.length;i++){
 			if(quan.displays[i].valueTooltip){
 				quan.displays[i].valueDisplay.textContent = quan.value.element.toPrecision(2) + unit;
 			}
 		}
+		quan.linkedQuantities.forEach(function(linkedQuantity){
+			linkedQuantity.value.element = quan.value.element;
+		});
 	}
 	this.value = new Hook(initialValue, this, updateValue);
 	
@@ -156,6 +162,15 @@ var Quantity = function(label, initialValue, unit, scale) {
 		
 		return display.domObject;
 	}
+	
+	
+	this.link = function(otherQuantity){
+		this.linkedQuantities.push(otherQuantity);
+		otherQuantity.linkedQuantities.push(this);
+		this.value.subscribe(otherQuantity.value);
+		otherQuantity.value.subscribe(this.value);
+	}
+	
 	
 	this.addButton = function(value, label){
 		var button = document.createElement('button');

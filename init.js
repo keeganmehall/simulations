@@ -53,27 +53,43 @@ var r1 = new Quantity('r1', 2, 'Ohm', resistanceScale);
 var r2 = new Quantity('R', 5, 'Ohm', resistanceScale);
 var c1 = new Quantity('C', 3, 'F', resistanceScale);
 
-
+var batteryVoltage = new Quantity('V', 10, 'V', app.voltageScale);
 
 
 var cap1Input = {label:'capacitor1', type:'capacitor', startNode:nodeB, endNode:nodeC, capacitance:c1, domParent:circuitDiagram}
 var resistor2Input = {label:'resistor2', type:'resistor', startNode:nodeA , endNode:nodeB, resistance:r2, domParent:circuitDiagram}
+var batteryInput = {label:'battery', type:'battery', startNode:nodeC, endNode:nodeA, voltage:batteryVoltage, domParent:circuitDiagram}
+
 
 //var resistor1 = new Resistor("resistor1", nodeA , nodeB ,r1,circuitDiagram);
 var resistor2 = new Component(resistor2Input);
 //var capacitor1 = new Component("capacitor1", 'capacitor', nodeB , nodeC ,c1,circuitDiagram);
 var capacitor1 = new Component(cap1Input);
+var battery = new Component(batteryInput);
 
 var sourceFunction = new SourceFunction({type:'constant', sourceNode:nodeA})
 var mainCircuit = new RCCircuit({sourceFunction:sourceFunction, middle:nodeB, ground:nodeC, resistance:resistor2.resistance, capacitance:capacitor1.capacitance})
 
 
-var diffEqInput = {time:time.value, circuit:mainCircuit}
+var diffEqInput = {time:time, circuit:mainCircuit}
 var diffEq = new Integrate(diffEqInput);
 
 
 //plot
-new Plot(document.getElementById('plot'), time, vb);
+var plotSVG = document.getElementById('plot');
+var plotDiv = document.getElementById('plotDiv');
+
+plotDiv.appendChild(minVoltage.addDisplay());
+d3.select(plotDiv).append('span').text('   ');
+plotDiv.appendChild(maxVoltage.addDisplay());
+d3.select(plotDiv).append('span').text('   ');
+plotDiv.appendChild(startTime.addDisplay());
+d3.select(plotDiv).append('span').text('   ');
+plotDiv.appendChild(endTime.addDisplay());
+
+
+
+new Plot(plotSVG, time, vb);
 
 
 
@@ -90,9 +106,6 @@ d3.select(quanDisplay).append('span').text('   ');
 quan.appendChild(time.addDisplay());
 d3.select(quanDisplay).append('span').text('   ');
 
-quanDisplay.appendChild(minVoltage.addDisplay());
-d3.select(quanDisplay).append('span').text('   ');
-quanDisplay.appendChild(maxVoltage.addDisplay());
 
 
 
