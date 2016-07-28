@@ -163,12 +163,31 @@ var Quantity = function(label, initialValue, unit, scale) {
 		return display.domObject;
 	}
 	
+	this.isLinked = function(otherQuantity){
+		if(this.linkedQuantities.indexOf(otherQuantity) === -1){
+			return false;
+		} else{
+			return true;
+		}
+	}
 	
 	this.link = function(otherQuantity){
-		this.linkedQuantities.push(otherQuantity);
-		otherQuantity.linkedQuantities.push(this);
-		this.value.subscribe(otherQuantity.value);
-		otherQuantity.value.subscribe(this.value);
+		if(this.isLinked(otherQuantity) === false){
+			otherQuantity.value.set(this.value.element);
+			this.linkedQuantities.push(otherQuantity);
+			otherQuantity.linkedQuantities.push(this);
+			this.value.subscribe(otherQuantity.value);
+			otherQuantity.value.subscribe(this.value);
+		}
+	}
+	
+	this.unlink = function(otherQuantity){
+		if(this.isLinked(otherQuantity) === true){
+			this.linkedQuantities.splice(this.linkedQuantities.indexOf(otherQuantity));
+			otherQuantity.linkedQuantities.splice(otherQuantity.linkedQuantities.indexOf(this));
+			this.value.unsubscribe(otherQuantity.value);
+			otherQuantity.value.unsubscribe(this.value);
+		}
 	}
 	
 	

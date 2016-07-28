@@ -154,6 +154,15 @@ var Bool = function(initialValue){
 			}
 		});
 	}
+	this.toggle = function(){
+		console.log('toggled');
+		if(bool.value.element){
+			bool.value.set(false);
+		} else{
+			bool.value.set(true);
+		}
+	}
+	
 	bool.value = new Hook(initialValue, this, update);
 	this.addToggle = function(trueLabel, falseLabel){
 		var button = document.createElement('button');
@@ -164,14 +173,8 @@ var Bool = function(initialValue){
 		} else{
 			button.textContent = trueLabel;
 		}
-		var toggle = function(){
-			if(bool.value.element){
-				bool.value.set(false);
-			} else{
-				bool.value.set(true);
-			}
-		}
-		button.addEventListener('click', toggle);
+		bool.toggle;
+		button.addEventListener('click', bool.toggle);
 		domObjects.push(button);
 		return button;
 	}

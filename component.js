@@ -27,15 +27,21 @@ var Component = function(input){
 		var l = 24;
 		var W = 50;
 		var s = 10;
-		var n = 2;
+		var n = 2; //Do not change
 		var r = 2; //ratio between length of short and long lines
 		var lineWidth = 4;
 		var w = function(){
 			return 0.01+(W - Math.pow(W,1-component.voltage.value.element/s))/2;;
 		}
+	} else if(this.type === 'switch'){
+		var l = 40;
+		var W = 50;
+		var angle = 30;
+		var lineWidth = 4;
+		var w = function(){return 0}
 	}
 	
-	
+
 	var x1 = this.startNode.position.x;
 	var x2 = this.endNode.position.x;
 	var y1 = this.startNode.position.y;
@@ -51,38 +57,32 @@ var Component = function(input){
 		diagram.attr("d", lineFunction(calcPath(width.element,l,n,x1,y1,x2,y2)))
 	}
 	var width = new Hook(w(), this, widthUpdate);
-
+	
 	if(this.type === 'resistor'){
 		width.subscribe(this.resistance.value);
 	} else if(this.type === 'capacitor'){
 		width.subscribe(this.capacitance.value);
 	} else if(this.type === 'battery'){
 		width.subscribe(this.voltage.value);
+	} else if(this.type === 'switch'){
+		var transformSwitch;
+		var updateSwitch = function(){
+			transformSwitch();
+			if(component.open.value.element === true){
+				component.startNode.voltage.unlink(component.endNode.voltage);
+			} else if(component.open.value.element === false){
+				component.startNode.voltage.link(component.endNode.voltage);
+			}
+		}
+		var switchUpdate = new Hook(this.open.value.element, this, updateSwitch);
+		switchUpdate.subscribe(this.open.value);
 	}
 	
 	
-	var updateStartColor = function(){
-		//console.log('updating component '+component.label+' start color')
-		var newColor = app.voltageScale.getColor(this.parent.startNode.voltage.value.element);
-		this.element = newColor;
-		startStop.attr("stop-color", newColor);
-	}
-	
-	var updateEndColor = function(){
-		//console.log('updating component '+component.label+' end color')
-		var newColor = app.voltageScale.getColor(this.parent.endNode.voltage.value.element);
-		this.element = newColor;
-		endStop.attr("stop-color", newColor);
-	}
+
 	
 	
-	var startColor = new Hook(app.voltageScale.getColor(this.startNode.voltage.value.element), this, updateStartColor);
-	startColor.subscribe(this.startNode.voltage.value);
-	startColor.subscribe(app.voltageScale.scaleUpdate);
-	
-	var endColor = new Hook(app.voltageScale.getColor(this.endNode.voltage.value.element), this, updateEndColor);
-	endColor.subscribe(this.endNode.voltage.value);
-	endColor.subscribe(app.voltageScale.scaleUpdate);
+
 	
 	var calcPath;
 	
@@ -97,8 +97,11 @@ var Component = function(input){
 		}
 		return svgPathArray.join(' ');
 	}
-
-
+	
+	var startColor;
+	var endColor;
+	
+	var L = Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2));
 	if(this. type === 'resistor'){
 		//lineFunction = d3.svg.line()
 			//.x(function(d){return d.x})
@@ -106,7 +109,6 @@ var Component = function(input){
 			//.interpolate('linear');
 		
 		calcPath = function(w,l,n,x1,y1,x2,y2){
-			var L = Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2));
 			var dx = l/n*(x2-x1)/L;
 			var dy = l/n*(y2-y1)/L;
 			var vx = w*(y2-y1)/L
@@ -133,6 +135,23 @@ var Component = function(input){
 				.attr('fill-opacity', 0.0)
 				.style('cursor', 'pointer');
 		}
+		
+		var updateStartColor = function(){
+			var newColor = app.voltageScale.getColor(this.parent.startNode.voltage.value.element);
+			this.element = newColor;
+			startStop.attr("stop-color", newColor);
+		}
+	
+		var updateEndColor = function(){
+			var newColor = app.voltageScale.getColor(this.parent.endNode.voltage.value.element);
+			this.element = newColor;
+			endStop.attr("stop-color", newColor);
+		}
+		
+		
+		startColor = new Hook(app.voltageScale.getColor(this.startNode.voltage.value.element), this, updateStartColor);
+		endColor = new Hook(app.voltageScale.getColor(this.endNode.voltage.value.element), this, updateEndColor);
+		
 	}else if(this.type === 'capacitor'){ ////////////////Capacitor
 		/*lineFunction = function(data){
 			var pathString = '';
@@ -143,7 +162,6 @@ var Component = function(input){
 		}*/
 		
 		calcPath = function(w,l,n,x1,y1,x2,y2){
-			var L = Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2));
 			l += lineWidth; //so gradient is not shown
 			var vx = w*(y2-y1)/L
 			var vy = w*(x1-x2)/L
@@ -169,9 +187,26 @@ var Component = function(input){
 				.attr('fill-opacity', 0.0)
 				.style('cursor', 'pointer');
 		}
+		
+		
+		var updateStartColor = function(){
+			var newColor = app.voltageScale.getColor(this.parent.startNode.voltage.value.element);
+			this.element = newColor;
+			startStop.attr("stop-color", newColor);
+		}
+	
+		var updateEndColor = function(){
+			var newColor = app.voltageScale.getColor(this.parent.endNode.voltage.value.element);
+			this.element = newColor;
+			endStop.attr("stop-color", newColor);
+		}
+		
+		startColor = new Hook(app.voltageScale.getColor(this.startNode.voltage.value.element), this, updateStartColor);
+		endColor = new Hook(app.voltageScale.getColor(this.endNode.voltage.value.element), this, updateEndColor);
+		
+		
 	}else if(this.type === 'battery'){
 		calcPath = function(w,l,n,x1,y1,x2,y2){
-			var L = Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2));
 			l += lineWidth; //so gradient is not shown
 			var dx = l/n*(x2-x1)/L;
 			var dy = l/n*(y2-y1)/L;
@@ -206,11 +241,117 @@ var Component = function(input){
 				.attr('fill-opacity', 0.0)
 				.style('cursor', 'pointer');
 		}
+		
+		var updateStartColor = function(){
+			var newColor = app.voltageScale.getColor(this.parent.startNode.voltage.value.element);
+			this.element = newColor;
+			startStop.attr("stop-color", newColor);
+		}
+	
+		var updateEndColor = function(){
+			var newColor = app.voltageScale.getColor(this.parent.endNode.voltage.value.element);
+			this.element = newColor;
+			endStop.attr("stop-color", newColor);
+		}
+		
+		startColor = new Hook(app.voltageScale.getColor(this.startNode.voltage.value.element), this, updateStartColor);
+		endColor = new Hook(app.voltageScale.getColor(this.endNode.voltage.value.element), this, updateEndColor);
+		
+	} else if(this.type === 'switch'){		
+		this.addDomObject = function(){
+			g1 = {x:x1+(x2-x1)*(1-l/L)/2,
+				y:y1+(y2-y1)*(1-l/L)/2};
+			g2 = {x:x1+(x2-x1)*(1+l/L)/2,
+				y:y1+(y2-y1)*(1+l/L)/2};
+		
+			diagram = d3.select(this.domParent)
+				.append('g')
+				.style('cursor', 'pointer');
+			var line1 = diagram.append('line')
+				.attr('x1', x1)
+				.attr('y1', y1)
+				.attr('x2', g1.x)
+				.attr('y2', g1.y)
+				.attr('stroke-width', lineWidth);
+			var line2 = diagram.append('line')
+				.attr('x1', g1.x)
+				.attr('y1', g1.y)
+				.attr('x2', g2.x)
+				.attr('y2', g2.y)
+				.attr('stroke-width', lineWidth);
+			var line3 = diagram.append('line')
+				.attr('x1', g2.x)
+				.attr('y1', g2.y)
+				.attr('x2', x2)
+				.attr('y2', y2)
+				.attr('stroke-width', lineWidth);
+			var p1 = diagram.append('circle')
+				.attr('cx', g1.x)
+				.attr('cy', g1.y)
+				.attr('r', lineWidth)
+				.attr('fill', 'white')
+				.attr('stroke-width', lineWidth/2);
+			var p2 = diagram.append('circle')
+				.attr('cx', g2.x)
+				.attr('cy', g2.y)
+				.attr('r', lineWidth)
+				.attr('fill', 'white')
+				.attr('stroke-width', lineWidth/2);
+			
+			transformSwitch = function(){
+				if(component.open.value.element === true){
+					var transformOrigin = g1.x.toString()+'px '+g1.y.toString()+'px';
+					line2.style('transform-origin', transformOrigin);
+					line2.style('transform', 'rotate('+angle+'deg)');
+					line2.style('transition', 'transform 0.1s');
+				} else if(component.open.value.element === false){
+					line2.style('transform', 'none');
+				}
+			};
+		
+			var updateStartColor = function(){
+				var newColor = app.voltageScale.getColor(this.parent.startNode.voltage.value.element);
+				this.element = newColor;
+				line1.attr('stroke', newColor);
+				line2.attr('stroke', newColor);
+				p1.attr('stroke', newColor);
+			}
+	
+			var updateEndColor = function(){
+				var newColor = app.voltageScale.getColor(this.parent.endNode.voltage.value.element);
+				this.element = newColor;
+				line3.attr('stroke', newColor);
+				p2.attr('stroke', newColor);
+			}
+			
+			startColor = new Hook(app.voltageScale.getColor(this.startNode.voltage.value.element), this, updateStartColor);
+			endColor = new Hook(app.voltageScale.getColor(this.endNode.voltage.value.element), this, updateEndColor);
+			startColor.update();
+			endColor.update();
+			switchUpdate.update();
+		}
+		
+		
+		
+		
+		
 	}
 		
 		
 	this.addDomObject();
 	
+	
+	startColor.subscribe(component.startNode.voltage.value);	
+	endColor.subscribe(component.endNode.voltage.value);
+	
+	
+	startColor.subscribe(app.voltageScale.scaleUpdate);
+	endColor.subscribe(app.voltageScale.scaleUpdate);
+	
+	
+	
+	//this.startColor = startColor;
+	//this.endColor = endColor;
 	
 	var boundingBox = diagram.node().getBBox();
 	var gradStartX = (g1.x-boundingBox.x)/boundingBox.width;
@@ -269,6 +410,10 @@ var Component = function(input){
 			document.addEventListener('mousedown', documentClickHandler)
 		}
 		this.voltage.link(this.endNode.voltage);
+	} else if(this.type === 'switch'){
+		diagramClickHandler = function(){
+			component.open.toggle();
+		}
 	}
 	
 	diagram.on('click', diagramClickHandler);	

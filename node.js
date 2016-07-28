@@ -1,5 +1,5 @@
 //This is completely unrelated to node.js
-var Node = function(label,position, voltage ,domParent){
+var Node = function(label,position, voltage ,domParent, hidden){
 	//position is in the form {x:123, y:456}
 	var node = this;
 	this.voltage = voltage;
@@ -7,6 +7,11 @@ var Node = function(label,position, voltage ,domParent){
 	this.label = label;
 	var dot;
 	this.domObjects = [];
+	if(hidden === 'hidden'){
+		var r = '2';
+	}else{var r = '10'}
+	
+	
 	//this.voltage=0;
 	
 	
@@ -41,7 +46,7 @@ var Node = function(label,position, voltage ,domParent){
 	this.addDomObject = function() {
 		dot=d3.select(domParent)
 			.append("circle")
-			.attr("r", "10px")
+			.attr("r", r+"px")
 			.attr("cx",this.position.x)
 			.attr("cy",this.position.y)
 			.attr('fill', this.color.element)
