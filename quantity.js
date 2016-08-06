@@ -1,4 +1,4 @@
-var Quantity = function(label, initialValue, unit, scale) {
+var Quantity = function(label, initialValue, unit, scale, editable) {
 	var quan = this;
 	if(!unit){
 		unit = '';
@@ -13,6 +13,13 @@ var Quantity = function(label, initialValue, unit, scale) {
 			
 		}
 	}
+	
+	if(editable && editable.value && (editable.value.element === false || editable.value.element === true)){
+		this.editable = editable;
+	}else{
+		this.editable = new Bool(true);
+	}
+	
 	this.dependsOn = []
 	this.functionOf = function(indVar){
 		for(var i = 0; i<quan.dependsOn.length; i++){
@@ -50,16 +57,17 @@ var Quantity = function(label, initialValue, unit, scale) {
 		
 		
 		var valueFocusHandler = function(){
+			if(quan.editable.value.element === true){
+				for(var i=0; i<quan.displays.length;i++){
+					quan.displays[i].valueDisplay.removeEventListener('mouseleave', mouseLeaveHandler);
+				}
 			
-			for(var i=0; i<quan.displays.length;i++){
-				quan.displays[i].valueDisplay.removeEventListener('mouseleave', mouseLeaveHandler);
+			
+				var slider = createSlider();
+			
+				display.sliderTooltip = new Tooltip(slider.node(), 'below', display.valueDisplay);
+				slider.node().addEventListener('mousedown', sliderMouseDownHandler);
 			}
-			
-			
-			var slider = createSlider();
-			
-			display.sliderTooltip = new Tooltip(slider.node(), 'below', display.valueDisplay);
-			slider.node().addEventListener('mousedown', sliderMouseDownHandler);
 		}		
 				
 		
@@ -130,19 +138,22 @@ var Quantity = function(label, initialValue, unit, scale) {
 		
 		
 		display.domObject = document.createElement('span');
-		display.domObject.contentEditable = 'true';
 		display.domObject.textContent = label;
+		display.domObject.className = "mt"
 		display.domObject.addEventListener('mouseenter', mouseEnterHandler);
 		display.domObject.tabindex = '0';
 		display.domObject.addEventListener('focus', quanFocusHandler);
 		
 		display.valueDisplay = document.createElement("span");
-		display.valueDisplay.contenteditable = 'true';
 		display.valueDisplay.addEventListener('keydown', keyDownHandler);
-		display.valueDisplay.contentEditable = 'true';
 		display.valueDisplay.addEventListener('focus', valueFocusHandler);
 		display.valueDisplay.addEventListener('blur', blurHandler);
-			
+		
+		if(this.editable.value.element === true){
+			display.valueDisplay.contentEditable = 'true';
+		} else{
+			display.valueDisplay.contentEditable = 'false';
+		}
 			
 		var createSlider = function(){
 			var slider = d3.select(document.createElement("div"))

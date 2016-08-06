@@ -31,16 +31,21 @@ var circuitDiagram = document.getElementById("circuitDiagram");
 var time = new Quantity('t',0, 's', timeScale);
 
 //voltages
-var va = new Quantity('Va', 9, 'V', app.voltageScale);
-var vb = new Quantity('Vb', 0, 'V', app.voltageScale);
-var vc = new Quantity('Vc', 8, 'V', app.voltageScale);
-var vd = new Quantity('Vd', 10, 'V', app.voltageScale);
+var vcEditable = new Bool(false);
+var vbEditable = new Bool(false);
+
+var va = new Quantity('Va', 10, 'V', app.voltageScale);
+var vb = new Quantity('Vb', 0, 'V', app.voltageScale, vbEditable);
+var vc = new Quantity('Vc', 0, 'V', app.voltageScale, vcEditable);
+var vd = new Quantity('Vd', 0, 'V', app.voltageScale);
+var ve = new Quantity('Ve', 10, 'V', app.voltageScale);
 
 //nodes
-nodeA = new Node("nodeA", {x:20,y:20}, va, circuitDiagram);
+var nodeA = new Node("nodeA", {x:20,y:20}, va, circuitDiagram);
 var nodeB = new Node("nodeB", {x:280,y:20}, vb, circuitDiagram);
 var nodeC = new Node("nodeC", {x:280,y:280}, vc, circuitDiagram);
-nodeD = new Node("nodeD", {x:20, y:280}, vd, circuitDiagram, 'hidden');
+var nodeD = new Node("nodeD", {x:20, y:280}, vd, circuitDiagram, 'hidden');
+var nodeE = new Node("nodeE", {x:20, y:150}, ve, circuitDiagram, 'hidden');
 
 //resistor
 var minResist = new Quantity('null', 0, 'Ohm');
@@ -61,19 +66,22 @@ var batteryVoltage = new Quantity('V', 10, 'V', app.voltageScale);
 
 var cap1Input = {label:'capacitor1', type:'capacitor', startNode:nodeB, endNode:nodeC, capacitance:c1, domParent:circuitDiagram}
 var resistor2Input = {label:'resistor2', type:'resistor', startNode:nodeA , endNode:nodeB, resistance:r2, domParent:circuitDiagram}
-var batteryInput = {label:'battery', type:'battery', startNode:nodeC, endNode:nodeD, voltage:batteryVoltage, domParent:circuitDiagram}
-var switchInput = {label:'switch', type:'switch', startNode:nodeD, endNode:nodeA, open:switchOpen, domParent:circuitDiagram}
+var batteryInput = {label:'battery', type:'battery', startNode:nodeD, endNode:nodeE, voltage:batteryVoltage, domParent:circuitDiagram}
+var switchInput = {label:'switch', type:'switch', startNode:nodeE, endNode:nodeA, open:switchOpen, domParent:circuitDiagram}
+var wireInput = {label:'wire', type:'wire', startNode:nodeC, endNode:nodeD, domParent:circuitDiagram}
 
 //var resistor1 = new Resistor("resistor1", nodeA , nodeB ,r1,circuitDiagram);
 var capacitor1 = new Component(cap1Input);
 
-battery = new Component(batteryInput);
+var battery = new Component(batteryInput);
 
-resistor2 = new Component(resistor2Input);
+var resistor2 = new Component(resistor2Input);
 //var capacitor1 = new Component("capacitor1", 'capacitor', nodeB , nodeC ,c1,circuitDiagram);
 
 
 var switch1 = new Component(switchInput);
+
+var wire = new Component(wireInput);
 
 var sourceFunction = new SourceFunction({type:'constant', sourceNode:nodeA})
 var mainCircuit = new RCCircuit({sourceFunction:sourceFunction, middle:nodeB, ground:nodeC, resistance:resistor2.resistance, capacitance:capacitor1.capacitance})

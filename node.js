@@ -1,5 +1,5 @@
 //This is completely unrelated to node.js
-var Node = function(label,position, voltage ,domParent, hidden){
+var Node = function(label,position, voltage ,domParent, visibility){
 	//position is in the form {x:123, y:456}
 	var node = this;
 	this.voltage = voltage;
@@ -7,7 +7,7 @@ var Node = function(label,position, voltage ,domParent, hidden){
 	this.label = label;
 	var dot;
 	this.domObjects = [];
-	if(hidden === 'hidden'){
+	if(visibility === 'hidden'){
 		var r = '2';
 	}else{var r = '10'}
 	
@@ -50,7 +50,6 @@ var Node = function(label,position, voltage ,domParent, hidden){
 			.attr("cx",this.position.x)
 			.attr("cy",this.position.y)
 			.attr('fill', this.color.element)
-			.style('cursor', 'pointer');
 		this.domObjects.push(dot)
 		
 	}
@@ -67,6 +66,9 @@ var Node = function(label,position, voltage ,domParent, hidden){
 		document.addEventListener('mousedown', documentClickHandler)
 	}
 	
-	dot.on('click', dotClickHandler);
+	if(visibility !== 'hidden'){
+		dot.on('click', dotClickHandler);
+		dot.style('cursor', 'pointer');
+	}
 }
 

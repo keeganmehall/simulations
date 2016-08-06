@@ -38,7 +38,11 @@ var Component = function(input){
 		var W = 50;
 		var angle = 30;
 		var lineWidth = 4;
-		var w = function(){return 0}
+		var w = function(){return 0};
+	} else if(this.type === 'wire'){
+		var W = 0;
+		var lineWidth = 4;
+		var w = function(){return 0};
 	}
 	
 
@@ -49,6 +53,9 @@ var Component = function(input){
 	var g1; // start of gradient; second point on spring 
 	var g2; // end of gradient; second to last point on spring
 	var diagram;
+	var diagramG = d3.select(this.domParent)
+		.insert('g', ':first-child');
+	diagramG.style('cursor', 'pointer');
 	
 	var widthUpdate = function(){
 		//console.log('updating component '+this.label+' width')
@@ -127,7 +134,8 @@ var Component = function(input){
 		
 		this.addDomObject = function(){
 		
-			diagram = d3.select(this.domParent).insert("path", ":first-child")
+			diagram = diagramG
+				.append("path")
 				.attr("d", lineFunction(calcPath(width.element,l,n,x1,y1,x2,y2)))
 				.attr("stroke", 'url(#'+this.label+'gradient)')
 				.attr("stroke-width", lineWidth)
@@ -177,15 +185,14 @@ var Component = function(input){
 		}
 		
 		this.addDomObject = function(){
-		
-			diagram = d3.select(this.domParent)	
+
+			diagram = diagramG
 				.append('path')
 				.attr("d", lineFunction(calcPath(width.element,l,n,x1,y1,x2,y2)))
 				.attr("stroke", 'url(#'+this.label+'gradient)')
 				.attr("stroke-width", lineWidth)
 				.attr("fill", "white")
 				.attr('fill-opacity', 0.0)
-				.style('cursor', 'pointer');
 		}
 		
 		
@@ -207,39 +214,40 @@ var Component = function(input){
 		
 	}else if(this.type === 'battery'){
 		calcPath = function(w,l,n,x1,y1,x2,y2){
-			l += lineWidth; //so gradient is not shown
 			var dx = l/n*(x2-x1)/L;
 			var dy = l/n*(y2-y1)/L;
 			var vx = w*(y2-y1)/L
 			var vy = w*(x1-x2)/L
-			g3 = {x:(L-l)/(2*L)*(x2-x1)+x1, y:(L-l)/(2*L)*(y2-y1)+y1}; 
-			g1 = {x:(L-l/3)/(2*L)*(x2-x1)+x1, y:(L-l/3)/(2*L)*(y2-y1)+y1};
-			g2 = {x:x2-(L-l/3)/(2*L)*(x2-x1), y:y2-(L-l/3)/(2*L)*(y2-y1)};
-			g4 = {x:x2-(L-l)/(2*L)*(x2-x1), y:y2-(L-l)/(2*L)*(y2-y1)};
+			var c1 = {x:(L-l)/(2*L)*(x2-x1)+x1, y:(L-l)/(2*L)*(y2-y1)+y1}; 
+			var c2 = {x:(L-l/3)/(2*L)*(x2-x1)+x1, y:(L-l/3)/(2*L)*(y2-y1)+y1};
+			var c3 = {x:x2-(L-l/3)/(2*L)*(x2-x1), y:y2-(L-l/3)/(2*L)*(y2-y1)};
+			var c4 = {x:x2-(L-l)/(2*L)*(x2-x1), y:y2-(L-l)/(2*L)*(y2-y1)};
 			
-			var data = [{x:x1,y:y1}, {x:g3.x, y:g3.y}];
+			var data = [{x:x1,y:y1}, {x:c1.x, y:c1.y}];
 			
-			var mdps = [g3,g1,g2,g4]; //midpoints; //order is g3,g1,g2,g4 for gradient
+			var mdps = [c1,c2,c3,c4]; //midpoints; //order is g3,g1,g2,g4 for gradient
 			
 			for(var i = 0; i<n; i++){
 				data.push({mx:mdps[2*i].x+vx/r, my:mdps[2*i].y+vy/r, x:mdps[2*i].x-vx/r, y:mdps[2*i].y-vy/r},
 					{mx:mdps[2*i+1].x+vx, my:mdps[2*i+1].y+vy, x:mdps[2*i+1].x-vx, y:mdps[2*i+1].y-vy})
 			}
 			
-			data.push({mx:g4.x, my:g4.y ,x:x2, y:y2});
-		
+			data.push({mx:c4.x, my:c4.y ,x:x2, y:y2});
+			
+			g1 = c1;
+			g2 = c4;
+			
 			return data;
 		}
 		this.addDomObject = function(){
-		
-			diagram = d3.select(this.domParent)	
+
+			diagram = diagramG	
 				.append('path')
 				.attr("d", lineFunction(calcPath(width.element,l,n,x1,y1,x2,y2)))
 				.attr("stroke", 'url(#'+this.label+'gradient)')
 				.attr("stroke-width", lineWidth)
 				.attr("fill", "white")
 				.attr('fill-opacity', 0.0)
-				.style('cursor', 'pointer');
 		}
 		
 		var updateStartColor = function(){
@@ -264,34 +272,31 @@ var Component = function(input){
 			g2 = {x:x1+(x2-x1)*(1+l/L)/2,
 				y:y1+(y2-y1)*(1+l/L)/2};
 		
-			diagram = d3.select(this.domParent)
-				.append('g')
-				.style('cursor', 'pointer');
-			var line1 = diagram.append('line')
+			var line1 = diagramG.append('line')
 				.attr('x1', x1)
 				.attr('y1', y1)
 				.attr('x2', g1.x)
 				.attr('y2', g1.y)
 				.attr('stroke-width', lineWidth);
-			var line2 = diagram.append('line')
+			var line2 = diagramG.append('line')
 				.attr('x1', g1.x)
 				.attr('y1', g1.y)
 				.attr('x2', g2.x)
 				.attr('y2', g2.y)
 				.attr('stroke-width', lineWidth);
-			var line3 = diagram.append('line')
+			var line3 = diagramG.append('line')
 				.attr('x1', g2.x)
 				.attr('y1', g2.y)
 				.attr('x2', x2)
 				.attr('y2', y2)
 				.attr('stroke-width', lineWidth);
-			var p1 = diagram.append('circle')
+			var p1 = diagramG.append('circle')
 				.attr('cx', g1.x)
 				.attr('cy', g1.y)
 				.attr('r', lineWidth)
 				.attr('fill', 'white')
 				.attr('stroke-width', lineWidth/2);
-			var p2 = diagram.append('circle')
+			var p2 = diagramG.append('circle')
 				.attr('cx', g2.x)
 				.attr('cy', g2.y)
 				.attr('r', lineWidth)
@@ -330,15 +335,35 @@ var Component = function(input){
 			endColor.update();
 			switchUpdate.update();
 		}
-		
-		
-		
-		
-		
+	} else if(this.type === 'wire'){
+		this.addDomObject = function(){
+			diagram = diagramG.append('line')
+				.attr('x1',x1)
+				.attr('x2',x2)
+				.attr('y1',y1)
+				.attr('y2',y2)
+				.attr('stroke-width', lineWidth);
+			var updateColor = function(){
+				var newColor = app.voltageScale.getColor(this.parent.startNode.voltage.value.element);
+				this.element = newColor;
+				diagram.attr('stroke', newColor);
+			}
+			startColor = new Hook(app.voltageScale.getColor(this.startNode.voltage.value.element), this, updateColor);
+			endColor = new Hook(app.voltageScale.getColor(this.endNode.voltage.value.element), this, updateColor);
+			startColor.update();
+		}
 	}
 		
 		
 	this.addDomObject();
+	diagramG.append('line')
+		.attr('x1', x1+(x2-x1)/6)
+		.attr('x2', x2+(x1-x2)/6)
+		.attr('y1', y1+(y2-y1)/6)
+		.attr('y2', y2+(y1-y2)/6)
+		.attr('stroke-width', 1.5*W)
+		.attr('stroke', 'white')
+		.attr('stroke-opacity', 0);
 	
 	
 	startColor.subscribe(component.startNode.voltage.value);	
@@ -353,31 +378,33 @@ var Component = function(input){
 	//this.startColor = startColor;
 	//this.endColor = endColor;
 	
-	var boundingBox = diagram.node().getBBox();
-	var gradStartX = (g1.x-boundingBox.x)/boundingBox.width;
-	var gradStartY = (g1.y-boundingBox.y)/boundingBox.height;
-	var gradEndX = (g2.x-boundingBox.x)/boundingBox.width;
-	var gradEndY = (g2.y-boundingBox.y)/boundingBox.height;
+	if(this.type === 'resistor' || this.type === 'capacitor' || this.type === 'battery'){
+		var boundingBox = diagram.node().getBBox();
+		var gradStartX = (g1.x-boundingBox.x)/boundingBox.width;
+		var gradStartY = (g1.y-boundingBox.y)/boundingBox.height;
+		var gradEndX = (g2.x-boundingBox.x)/boundingBox.width;
+		var gradEndY = (g2.y-boundingBox.y)/boundingBox.height;
 	
-	var gradient = d3.select(this.domParent)
-		.append('defs')
-		.append('linearGradient')
-		.attr('id', this.label+"gradient");
+		var gradient = d3.select(this.domParent)
+			.append('defs')
+			.append('linearGradient')
+			.attr('id', this.label+"gradient");
 		
-	var startStop = gradient.append('stop')
-		.attr('class','firstStop')
-		.attr('offset','0%')
-		.attr('stop-color', startColor.element);
+		var startStop = gradient.append('stop')
+			.attr('class','firstStop')
+			.attr('offset','0%')
+			.attr('stop-color', startColor.element);
 		
-	var endStop = gradient.append('stop')
-		.attr('class','lastStop')
-		.attr('offset','100%')
-		.attr('stop-color', endColor.element);
+		var endStop = gradient.append('stop')
+			.attr('class','lastStop')
+			.attr('offset','100%')
+			.attr('stop-color', endColor.element);
 	
-	gradient.attr('x1',gradStartX)
-		.attr('y1',gradStartY)
-		.attr('x2',gradEndX)
-		.attr('y2',gradEndY);
+		gradient.attr('x1',gradStartX)
+			.attr('y1',gradStartY)
+			.attr('x2',gradEndX)
+			.attr('y2',gradEndY);
+		}
 		
 	if(this.type === 'resistor'){
 		var resistanceTooltipDisplay = component.resistance.addDisplay();
@@ -414,8 +441,11 @@ var Component = function(input){
 		diagramClickHandler = function(){
 			component.open.toggle();
 		}
+	} else if(this.type === 'wire'){
+		diagramClickHandler = function(){}
+		this.startNode.voltage.link(this.endNode.voltage);
 	}
 	
-	diagram.on('click', diagramClickHandler);	
+	diagramG.on('click', diagramClickHandler);	
 	
 }
