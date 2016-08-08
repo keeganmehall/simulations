@@ -31,6 +31,30 @@ var SourceFunction = function(input){
 		}
 		update = function(){}
 		
+	}else if(input.type === 'node voltage'){ ////Update future when voltage is changed, keep past
+		var tValueArray = [input.time.value.element];
+		var vValueArray = [input.sourceNode.voltage.value.element];
+		//var spline = numeric.spline(tValueArray.concat([input.time.scale().max.value.element]), vValueArray.concat([input.sourceNode.voltage.value.element]));
+
+		update = function(){
+			while(tValueArray[tValueArray.length-1] > input.time.value.element){
+				tValueArray.pop();
+				vValueArray.pop();
+			}
+			tValueArray.push(input.time.value.element);
+			vValueArray.push(input.sourceNode.voltage.value.element);
+			//spline = numeric.spline(tValueArray.concat([input.time.scale().max.value.element]), vValueArray.concat([input.sourceNode.voltage.value.element]));
+			
+		}
+		equation = function(t){	
+			var i = 0;
+			while(tValueArray[i] < t){
+				i++;
+			}
+			if(vValueArray[i-1]){
+				return vValueArray[i-1];
+			} else{return vValueArray[i]}
+		}
 	}
 	
 	this.equation = new Hook(equation, this, update);

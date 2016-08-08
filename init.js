@@ -83,7 +83,7 @@ var switch1 = new Component(switchInput);
 
 var wire = new Component(wireInput);
 
-var sourceFunction = new SourceFunction({type:'constant', sourceNode:nodeA})
+var sourceFunction = new SourceFunction({type:'node voltage', sourceNode:nodeA, time:time})
 var mainCircuit = new RCCircuit({sourceFunction:sourceFunction, middle:nodeB, ground:nodeC, resistance:resistor2.resistance, capacitance:capacitor1.capacitance})
 
 
