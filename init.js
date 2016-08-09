@@ -114,8 +114,8 @@ var playbackSpeed = new Quantity('Playback Speed', 1);
 
 quan.appendChild(time.addDisplay());
 d3.select(quanDisplay).append('span').text('   ');
-var playbackToggle = new Bool(false);
-quan.appendChild(playbackToggle.addToggle('Play', 'Pause'));
+
+quan.appendChild(time.animationRunning.addToggle('Play', 'Pause'));
 d3.select(quanDisplay).append('span').text('   ');
 quanDisplay.appendChild(playbackSpeed.addDisplay());
 d3.select(quanDisplay).append('span').text('   ');
@@ -125,5 +125,5 @@ d3.select(quanDisplay).append('span').text('   ');
 
 
 
-var animation = new Animation(time, playbackSpeed, playbackToggle);
+var animation = new Animation(time, playbackSpeed);
 }

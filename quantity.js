@@ -20,6 +20,8 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 		this.editable = new Bool(true);
 	}
 	
+	this.animationRunning = new Bool(false);
+	
 	this.dependsOn = []
 	this.functionOf = function(indVar){
 		for(var i = 0; i<quan.dependsOn.length; i++){
@@ -72,7 +74,7 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 				
 		
 		var slideEventHandler = function(e,newValue){
-			console.log(newValue);
+			quan.animationRunning.value.set(false);
 			quan.value.set(newValue);
 			inputChanged = false;
 		}
@@ -120,6 +122,7 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 			if(inputChanged){
 				var newValue = parseFloat(display.valueDisplay.textContent)
 				if(!isNaN(newValue)){
+					quan.animationRunning.value.set(false);
 					quan.value.set(newValue);
 				}
 			}

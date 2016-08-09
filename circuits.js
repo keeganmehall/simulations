@@ -13,7 +13,7 @@ var RCCircuit = function(input){
 	this.dependentVariables = [input.middle.voltage, input.sourceFunction.sourceNode.voltage];
 	this.equation.element = function(t,V){
 		return (rcCircuit.sourceFunction.equation.element(t) - V)/(rcCircuit.capacitance.value.element*rcCircuit.resistance.value.element)
-	}//
+	}
 }
 
 var SourceFunction = function(input){
@@ -43,9 +43,9 @@ var SourceFunction = function(input){
 			}
 			tValueArray.push(input.time.value.element);
 			vValueArray.push(input.sourceNode.voltage.value.element);
-			//spline = numeric.spline(tValueArray.concat([input.time.scale().max.value.element]), vValueArray.concat([input.sourceNode.voltage.value.element]));
-			
+			//spline = numeric.spline(tValueArray.concat([input.time.scale().max.value.element]), vValueArray.concat([input.sourceNode.voltage.value.element]));	
 		}
+		
 		equation = function(t){	
 			var i = 0;
 			while(tValueArray[i] < t){
@@ -59,4 +59,7 @@ var SourceFunction = function(input){
 	
 	this.equation = new Hook(equation, this, update);
 	this.equation.subscribe(input.sourceNode.voltage.value);
+	if(input.type  === 'node voltage'){
+		this.equation.subscribe(input.time.value);
+	}
 }

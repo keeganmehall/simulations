@@ -112,7 +112,7 @@ var Integrate = function(input){
 
 
 //Animation
-var Animation = function(parameter, playbackSpeed, running){
+var Animation = function(parameter, playbackSpeed){
 	
 	
 	
@@ -121,21 +121,21 @@ var Animation = function(parameter, playbackSpeed, running){
 		var tw0 = performance.now()/1000;	//world time
 		var stopValue = parameter.scale().max.value.element;
 		var step = function(timeMS){
-			if(running.value.element){
+			if(parameter.animationRunning.value.element){
 				var factor = playbackSpeed.value.element;
 				var tw = timeMS/1000;
 				var tm = factor*(tw-tw0)+tm0
 				parameter.value.set(tm)
 				if(tm < stopValue){
 					window.requestAnimationFrame(step);
-				} else{running.value.set(false)}
+				} else{parameter.animationRunning.value.set(false)}
 			}
 		}
 		var anim = window.requestAnimationFrame(step);
 	}
-	var playback = new Hook({speed:playbackSpeed.value.element, running:running}, this, updatePlayback);
+	var playback = new Hook({speed:playbackSpeed.value.element, running:parameter.animationRunning}, this, updatePlayback);
 	playback.subscribe(playbackSpeed.value);
-	playback.subscribe(running.value);
+	playback.subscribe(parameter.animationRunning.value);
 	playback.update();
 }
 
