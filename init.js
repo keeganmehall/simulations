@@ -1,6 +1,6 @@
 var maxVoltage = new Quantity('VMax', 10, 'V');
 var minVoltage = new Quantity('VMin', 0, 'V');
-var app = {voltageScale: new Scale(minVoltage,maxVoltage)};
+var app = {voltageScale: new Scale(minVoltage,maxVoltage, true), uids: []};
 
 window.onload = function(){
 //Quantity

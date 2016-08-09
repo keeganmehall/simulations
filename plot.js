@@ -42,7 +42,7 @@ var Plot = function(domParent, indVar, depVar, showCurrentPos){
 	linePlotUpdate.subscribe(depVar.scale().scaleUpdate);
 
 	var dot = d3.select(domParent).append('circle')
-		.attr('r','4')
+		.attr('r','6')
 		.attr('fill', 'red');
 	var updateDotPos = function(){
 		var dotXPos = indVarScale.axisScale(indVar.value.element)+origin.x;

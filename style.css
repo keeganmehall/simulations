@@ -1,8 +1,9 @@
 .axis path,
 .axis line {
-    fill: none;
-    stroke: black;
+    fill:none;
+	stroke:black;
     shape-rendering: crispEdges;
+    stroke-width:2;
 }
 
 .axis text {
