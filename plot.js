@@ -1,4 +1,4 @@
-var Plot = function(domParent, indVar, depVar){
+var Plot = function(domParent, indVar, depVar, showCurrentPos){
 	//var indVar = [];
 	//var depVar = [];
 	var linePlots = [];
@@ -12,9 +12,13 @@ var Plot = function(domParent, indVar, depVar){
 	indVarScale = indVar.scale().addAxis(domParent, origin, width-60, 'right');
 	depVarScale = depVar.scale().addAxis(domParent, origin, height-60, 'up');
 	////////////////////////////////////////////////////////FIX TOPO SORT
-	var linePlot;
+	var linePlot = d3.select(domParent).append('path')
+		.attr('stroke', 'black')
+		.attr('stroke-width', 2)
+		.attr('fill', 'none');
+		
 	var drawPlot = function(){
-		if(linePlot) domParent.removeChild(linePlot.node());
+		//if(linePlot) domParent.removeChild(linePlot.node());
 		var indMin = indVar.scale().min.value.element;
 		var indMax = indVar.scale().max.value.element;
 		var solution = depVar.functionOf(indVar);
@@ -27,15 +31,27 @@ var Plot = function(domParent, indVar, depVar){
 			.y(function(d){return d.y})
 			.interpolate('linear');
 		
-		linePlot = d3.select(domParent).append('path')
-			.attr('d', lineFunction(lineData))
-			.attr('stroke', 'black')
-			.attr('stroke-width', 2)
-			.attr('fill', 'none');
+		
+			linePlot.attr('d', lineFunction(lineData));
+			
 	}
 	var linePlotUpdate = new Hook('', this, drawPlot);
 	linePlotUpdate.update();
 	linePlotUpdate.subscribe(depVar.functionOf(indVar));
 	linePlotUpdate.subscribe(indVar.scale().scaleUpdate);
 	linePlotUpdate.subscribe(depVar.scale().scaleUpdate);
+
+	var dot = d3.select(domParent).append('circle')
+		.attr('r','4')
+		.attr('fill', 'red');
+	var updateDotPos = function(){
+		var dotXPos = indVarScale.axisScale(indVar.value.element)+origin.x;
+		var dotYPos = depVarScale.axisScale(depVar.value.element)+height-origin.y;
+		dot.attr('cx', dotXPos)
+			.attr('cy', dotYPos);
+	}
+	dotPosUpdate = new Hook(null, null, updateDotPos);
+	dotPosUpdate.subscribe(indVar.value);
+	dotPosUpdate.subscribe(depVar.value);
+	updateDotPos();
 }

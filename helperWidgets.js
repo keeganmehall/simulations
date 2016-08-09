@@ -155,7 +155,6 @@ var Bool = function(initialValue){
 		});
 	}
 	this.toggle = function(){
-		console.log('toggled');
 		if(bool.value.element){
 			bool.value.set(false);
 		} else{
@@ -179,3 +178,5 @@ var Bool = function(initialValue){
 		return button;
 	}
 }
+
+

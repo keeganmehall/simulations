@@ -72,6 +72,7 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 				
 		
 		var slideEventHandler = function(e,newValue){
+			console.log(newValue);
 			quan.value.set(newValue);
 			inputChanged = false;
 		}
