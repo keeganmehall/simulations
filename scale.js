@@ -142,6 +142,6 @@ var Scale = function(minimum, maximum, colorScale){
 			plot.remove(axisGrop);
 		}
 
-		return {axisScale:axisScale, axisWindowUpdate: axisWindowUpdate};		
+		return {axisScale:axisScale, axisWindowUpdate: axisWindowUpdate, axisEnd:end};		
 		}
 }

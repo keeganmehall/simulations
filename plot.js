@@ -41,9 +41,45 @@ var Plot = function(domParent, indVar, depVar, showCurrentPos){
 	linePlotUpdate.subscribe(indVar.scale().scaleUpdate);
 	linePlotUpdate.subscribe(depVar.scale().scaleUpdate);
 
+	var svgBoundingRect = domParent.getBoundingClientRect();
+	var dotDragHandler = function(e){
+		e.preventDefault();
+		var svgX = e.clientX-svgBoundingRect.left;
+		var svgY = e.clientY-svgBoundingRect.top;
+		var plotXFrac = (svgX-origin.x)/(indVarScale.axisEnd.x-origin.x);
+		//var plotYFrac = (svgY-origin.y)/(depVarScale.axisEnd.y-origin.y);
+		if(plotXFrac >= 0 && plotXFrac <= 1){ 
+			var newIndVarValue = plotXFrac*(indVar.scale().max.value.element - indVar.scale().min.value.element) + indVar.scale().min.value.element;
+			indVar.value.set(newIndVarValue);
+		} else if(plotXFrac >= -0.1 && plotXFrac <= 0.1){
+			indVar.value.set(indVar.scale().min.value.element);
+		} else if(plotXFrac >= 0.9 && plotXFrac <= 1.1){
+			indVar.value.set(indVar.scale().max.value.element);
+		} else{
+			document.removeEventListener('mousemove', dotDragHandler);
+			document.body.style.cursor = null;
+		}
+		
+	}
+	var dotMouseDownHandler = function(e){
+		e.preventDefault();
+		indVar.animationRunning.value.set(false);
+		document.addEventListener('mousemove', dotDragHandler);
+		document.body.style.cursor = 'pointer';
+		document.addEventListener('mouseup', function(){
+			document.removeEventListener('mousemove', dotDragHandler);
+			document.body.style.cursor = null;
+		});
+	}
 	var dot = d3.select(domParent).append('circle')
 		.attr('r','6')
-		.attr('fill', 'red');
+		.attr('fill', 'red')
+		.attr('stroke-width', '10')
+		.attr('stroke', 'black')
+		.attr('stroke-opacity', 0)
+		.style('cursor', 'pointer');
+		
+	dot.node().addEventListener('mousedown', dotMouseDownHandler);
 	var updateDotPos = function(){
 		var dotXPos = indVarScale.axisScale(indVar.value.element)+origin.x;
 		var dotYPos = depVarScale.axisScale(depVar.value.element)+height-origin.y;
