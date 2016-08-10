@@ -105,9 +105,13 @@ plotDiv.appendChild(endTime.addDisplay());
 
 
 
-new Plot(plotSVG, time, vb);
+var mainPlot = new Plot(plotSVG, timeScale, app.voltageScale);
+mainPlot.addPlot(time, vb);
+mainPlot.addPlot(time, va);
 
 
+var vaOfTime = va.functionOf(time);
+console.log(vaOfTime);
 
 
 var playbackSpeed = new Quantity('Playback Speed', 1);
