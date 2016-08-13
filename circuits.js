@@ -59,8 +59,9 @@ var SourceFunction = function(input){
 	
 	this.equation = new Hook(equation, this, update);
 	this.equation.subscribe(input.sourceNode.voltage.value);
+	
 	if(input.type  === 'node voltage'){
-		this.equation.subscribe(input.time.value);///////////////////////////FIX THIS ---- source function graph constantly redraws.
+		input.sourceNode.voltage.value.subscribe(input.time.value);///////////////////////////FIX THIS ---- source function graph constantly redraws.
 	}
 	equationWithAt = {};
 	equationWithAt.at = function(t){return equation(t)}

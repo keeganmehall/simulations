@@ -34,7 +34,7 @@ var time = new Quantity('t',0, 's', timeScale);
 var vcEditable = new Bool(false);
 var vbEditable = new Bool(false);
 
-var va = new Quantity('Va', 10, 'V', app.voltageScale);
+var va = new Quantity('Va', 5, 'V', app.voltageScale);
 var vb = new Quantity('Vb', 0, 'V', app.voltageScale, vbEditable);
 var vc = new Quantity('Vc', 0, 'V', app.voltageScale, vcEditable);
 var vd = new Quantity('Vd', 0, 'V', app.voltageScale);
@@ -61,7 +61,7 @@ var r2 = new Quantity('R', 5, 'Ohm', resistanceScale);
 var c1 = new Quantity('C', 3, 'F', resistanceScale);
 var switchOpen = new Bool(true);
 
-var batteryVoltage = new Quantity('V', 10, 'V', app.voltageScale);
+var batteryVoltage = new Quantity('V', 8, 'V', app.voltageScale);
 
 
 var cap1Input = {label:'capacitor1', type:'capacitor', startNode:nodeB, endNode:nodeC, capacitance:c1, domParent:circuitDiagram}

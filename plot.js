@@ -49,14 +49,9 @@ var Plot = function(domParent, xScale, yScale){
 		linePlotUpdate.subscribe(indVar.scale().scaleUpdate);
 		linePlotUpdate.subscribe(depVar.scale().scaleUpdate);
 		
-		
-		
-		var dotDragHandler = function(e){
-			e.preventDefault();
-			var svgX = e.clientX-svgBoundingRect.left;
-			var svgY = e.clientY-svgBoundingRect.top;
+		var setValFromMouse = function(x, indVar){
+			var svgX = x-svgBoundingRect.left;
 			var plotXFrac = (svgX-origin.x)/(xAxisScale.axisEnd.x-origin.x);
-			//var plotYFrac = (svgY-origin.y)/(xAxisScale.axisEnd.y-origin.y);
 			if(plotXFrac >= 0 && plotXFrac <= 1){ 
 				var newIndVarValue = plotXFrac*(indVar.scale().max.value.element - indVar.scale().min.value.element) + indVar.scale().min.value.element;
 				indVar.value.set(newIndVarValue);
@@ -65,6 +60,14 @@ var Plot = function(domParent, xScale, yScale){
 			} else if(plotXFrac >= 0.9 && plotXFrac <= 1.1){
 				indVar.value.set(indVar.scale().max.value.element);
 			} else{
+				return false;
+			}
+			return true;
+		}
+		
+		var dotDragHandler = function(e){
+			e.preventDefault();
+			if(setValFromMouse(e.clientX, indVar) === false){
 				document.removeEventListener('mousemove', dotDragHandler);
 				document.body.style.cursor = null;
 			}
@@ -100,7 +103,10 @@ var Plot = function(domParent, xScale, yScale){
 		dotPosUpdate.subscribe(depVar.value);
 		updateDotPos();
 		
-		
+		domParent.addEventListener('click', function(e){
+			indVar.animationRunning.value.set(false);
+			setValFromMouse(e.clientX, indVar);
+		})
 	}
 	
 	
