@@ -1,23 +1,3 @@
-/*var maxVoltage = new Quantity('VMax', 10, 'V');
-var minVoltage = new Quantity('VMin', 0, 'V');
-var app = {voltageScale: new Scale(minVoltage,maxVoltage, true), uids: []};
-
-window.onload = function(){
-
-var startTime = new Quantity('tMin', 0, 's', null);
-var endTime = new Quantity('tMax', 30, 's', null);
-var timeScale = new Scale(startTime, endTime);
-
-var testQuan = new Quantity('test', 0, 's', timeScale);
-
-
-
-document.getElementById('quan').appendChild(testQuan.addDisplay());
-
-var slider = new Slider({quantity:testQuan, domParent:document.getElementById('quan')});
-}*/
-
-
 var Slider = function(input){
 	var uid = app.uids.push(app.uids.length)-1;
 	var width;

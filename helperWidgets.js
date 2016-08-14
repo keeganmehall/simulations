@@ -39,6 +39,8 @@ var Tooltip = function(domObject, position, domParent){
 		document.body.appendChild(domObject);
 		domObject.style.position = 'absolute';
 		domObject.style.backgroundColor = 'white';
+		domObject.style.borderRadius = '3px';
+		domObject.style.boxShadow = '1px 2px 3px rgba(0,0,20,.5)';
 		domObject.style.top = position.top;
 		domObject.style.left = position.left;
 		

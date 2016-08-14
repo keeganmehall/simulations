@@ -68,6 +68,7 @@ var Scale = function(minimum, maximum, colorScale){
 				return [scale.max.value.element, scale.min.value.element];
 			}
 		}
+		
 	
 		
 		if(colorScale){
@@ -112,7 +113,8 @@ var Scale = function(minimum, maximum, colorScale){
 	
 		var axis = d3.svg.axis()
 			.scale(axisScale)
-			.orient(orientation);
+			.orient(orientation)
+			.ticks(length/30);
 		
 			
 			
@@ -124,7 +126,7 @@ var Scale = function(minimum, maximum, colorScale){
 
 	
 		var draw = function(){
-			axisScale.domain(domain())
+			axisScale.domain(domain());
 			axisGroup.call(axis);
 		}
 	

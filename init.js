@@ -111,7 +111,6 @@ mainPlot.addPlot(time, va);
 
 
 var vaOfTime = va.functionOf(time);
-console.log(vaOfTime);
 
 
 var playbackSpeed = new Quantity('Playback Speed', 1);
