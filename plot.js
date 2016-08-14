@@ -6,8 +6,8 @@ var Plot = function(domParent, xScale, yScale){
 	var height = domParent.getBoundingClientRect().height;
 	
 	
-	var origin = {x:50, y:height-40}
-	xAxisScale = xScale.addAxis(domParent, origin, width-70, 'right');
+	var origin = {x:55, y:height-40}
+	xAxisScale = xScale.addAxis(domParent, origin, width-75, 'right');
 	yAxisScale = yScale.addAxis(domParent, origin, height-60, 'up');
 	var svgBoundingRect = domParent.getBoundingClientRect();
 	var xEnd = xAxisScale.axisEnd;

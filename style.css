@@ -14,11 +14,22 @@
 .mt{
 	font-style: italic;
 	font-family:MathJax_Main,"Times New Roman",Times,serif;
-	font-size:1.5em;
+	font-size:1.3em;
 	-webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none;   /* Chrome/Safari/Opera */
   -khtml-user-select: none;    /* Konqueror */
   -moz-user-select: none;      /* Firefox */
   -ms-user-select: none;       /* IE/Edge */
   user-select: none;   
+}
+
+.mt-number{
+	font-family:MathJax_Main,"Times New Roman",Times,serif;
+	font-size:1.3em;
+	
+}
+
+.unit{
+	font-family:MathJax_Main,"Times New Roman",Times,serif;
+	font-size:1.3em;
 }

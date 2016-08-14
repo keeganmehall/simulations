@@ -63,7 +63,7 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 				for(var i=0; i<quan.displays.length;i++){
 					quan.displays[i].tooltipDisplay.removeEventListener('mouseleave', mouseLeaveHandler);
 				}
-			
+				quan.animationRunning.value.set(false);
 				display.sliderTooltip = new Tooltip(slider, 'below', display.tooltipDisplay);
 				slider.addEventListener('mousedown', sliderMouseDownHandler);
 			}
@@ -127,7 +127,7 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 		
 		var keyDownHandler = function(e){
 			if(e.keyCode === 13){
-				display.tooltipDisplay.blur();
+				display.valueDisplay.blur();
 			}
 		}
 		
@@ -147,11 +147,17 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 		
 		display.tooltipDisplay = document.createElement('div');
 		display.valueDisplay = display.tooltipDisplay.appendChild(document.createElement("span"));
+		display.valueDisplay.className = 'mt-number';
 		display.unitDisplay = display.tooltipDisplay.appendChild(document.createElement("span"));
 		display.unitDisplay.textContent = unit;
+		display.unitDisplay.className = 'unit';
 		display.valueDisplay.addEventListener('keydown', keyDownHandler);
 		display.valueDisplay.addEventListener('focus', valueFocusHandler);
 		display.valueDisplay.addEventListener('blur', blurHandler);
+		display.tooltipDisplay.addEventListener('click', function(e){
+			e.preventDefault();
+			display.valueDisplay.focus();
+		})
 		
 		if(this.editable.value.element === true){
 			display.valueDisplay.contentEditable = 'true';

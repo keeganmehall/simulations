@@ -11,10 +11,6 @@ var Scale = function(minimum, maximum, label, unit, colorScale){
 	
 	if(!unit){
 		unit = ''
-	}else{
-		if(axisLabelStr !== ''){
-			axisLabelStr += ('/'+unit);
-		}
 	}
 	this.getColor = function(value){
 		var blue = Math.round(255*(1-(value - min)/(max-min)));
@@ -79,15 +75,38 @@ var Scale = function(minimum, maximum, label, unit, colorScale){
 			if(direction === 'right' || direction === 'left'){
 				labelLoc = {x:(start.x+end.x)/2, y:start.y+35};
 			} else if(direction === 'up' || direction === 'down'){
-				labelLoc = {x:start.x - 33, y:(start.y+end.y)/2}
+				labelLoc = {x:start.x - 38, y:(start.y+end.y)/2}
+			}
+			if(label !== ''){
+				if(unit !== ''){
+					var slash = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+					slash.textContent = '/';
+					slash.setAttribute('text-anchor', 'middle');
+					slash.setAttribute('x', labelLoc.x);
+					slash.setAttribute('y', labelLoc.y);
+					slash.setAttribute('class', 'unit');
+					domParent.appendChild(slash);
+					var slashLoc = slash.getBoundingClientRect();
+					
+					var varLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+					varLabel.textContent = label;
+					varLabel.setAttribute('text-anchor', 'end');
+					varLabel.setAttribute('x', labelLoc.x - slashLoc.width/2);
+					varLabel.setAttribute('y', labelLoc.y);
+					varLabel.setAttribute('class', 'mt');
+					domParent.appendChild(varLabel);
+					
+					var unitLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+					unitLabel.textContent = unit;
+					unitLabel.setAttribute('text-anchor', 'left');
+					unitLabel.setAttribute('x', labelLoc.x + slashLoc.width/2);
+					unitLabel.setAttribute('y', labelLoc.y);
+					unitLabel.setAttribute('class', 'unit');
+					domParent.appendChild(unitLabel);
+				}
 			}
 			
-			var axisLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-			domParent.appendChild(axisLabel);
-			axisLabel.textContent = axisLabelStr;
-			axisLabel.setAttribute('text-anchor', 'middle');
-			axisLabel.setAttribute('x', labelLoc.x);
-			axisLabel.setAttribute('y', labelLoc.y);
+			
 		}
 	
 		var domain = function(){
