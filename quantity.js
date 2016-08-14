@@ -38,7 +38,7 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 	var updateValue = function(){
 		for(var i=0;i<quan.displays.length;i++){
 			if(quan.displays[i].valueTooltip){
-				quan.displays[i].valueDisplay.textContent = quan.value.element.toPrecision(2) + unit;
+				quan.displays[i].valueDisplay.textContent = quan.value.element.toPrecision(2);
 			}
 		}
 		quan.linkedQuantities.forEach(function(linkedQuantity){
@@ -60,14 +60,15 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 		
 		var valueFocusHandler = function(){
 			if(quan.editable.value.element === true){
+				console.log('value focus handler');
 				for(var i=0; i<quan.displays.length;i++){
-					quan.displays[i].valueDisplay.removeEventListener('mouseleave', mouseLeaveHandler);
+					quan.displays[i].tooltipDisplay.removeEventListener('mouseleave', mouseLeaveHandler);
 				}
 			
 			
 				var slider = createSlider();
 			
-				display.sliderTooltip = new Tooltip(slider, 'below', display.valueDisplay);
+				display.sliderTooltip = new Tooltip(slider, 'below', display.tooltipDisplay);
 				slider.addEventListener('mousedown', sliderMouseDownHandler);
 			}
 		}		
@@ -81,11 +82,11 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 		
 		var mouseEnterHandler = function(){
 			for(var i=0; i<quan.displays.length;i++){
-				quan.displays[i].valueTooltip = new Tooltip(quan.displays[i].valueDisplay, 'covering', quan.displays[i].domObject);
-				quan.displays[i].valueDisplay.textContent = quan.value.element.toPrecision(2)+unit;
+				quan.displays[i].valueTooltip = new Tooltip(quan.displays[i].tooltipDisplay, 'covering', quan.displays[i].domObject);
+				quan.displays[i].valueDisplay.textContent = quan.value.element.toPrecision(2);
 				quan.displays[i].valueDisplay.addEventListener('input', function(){quan.inputChanged = true});
 			}
-			display.valueDisplay.addEventListener('mouseleave', mouseLeaveHandler);
+			display.tooltipDisplay.addEventListener('mouseleave', mouseLeaveHandler);
 			
 				
 			
@@ -102,15 +103,15 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 		
 		var quanFocusHandler = function(){
 			for(var i=0; i<quan.displays.length;i++){
-				quan.displays[i].valueTooltip = new Tooltip(quan.displays[i].valueDisplay, 'covering', quan.displays[i].domObject);
-				quan.displays[i].valueTooltip.domObject.textContent = quan.value.element.toPrecision(2)+unit;
+				quan.displays[i].valueTooltip = new Tooltip(quan.displays[i].tooltipDisplay, 'covering', quan.displays[i].domObject);
+				quan.displays[i].valueTooltip.domObject.textContent = quan.value.element.toPrecision(2);
 				quan.displays[i].valueTooltip.domObject.addEventListener('focus', valueFocusHandler);
 				quan.displays[i].valueTooltip.domObject.addEventListener('input', function(){quan.inputChanged = true});
 			}
-			display.valueTooltip.domObject.focus();
+			display.valueDisplay.focus();
 		}
 		
-		var blurHandler = function(){ //on valueDisplay
+		var blurHandler = function(){ //on tooltipDisplay
 			for(var i=0; i<quan.displays.length;i++){
 				quan.displays[i].valueTooltip.closeTooltip();
 				if(quan.displays[i].sliderTooltip){
@@ -130,7 +131,7 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 		
 		var keyDownHandler = function(e){
 			if(e.keyCode === 13){
-				display.valueDisplay.blur();
+				display.tooltipDisplay.blur();
 			}
 		}
 		
@@ -148,7 +149,10 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 		display.domObject.tabindex = '0';
 		display.domObject.addEventListener('focus', quanFocusHandler);
 		
-		display.valueDisplay = document.createElement("span");
+		display.tooltipDisplay = document.createElement('div');
+		display.valueDisplay = display.tooltipDisplay.appendChild(document.createElement("span"));
+		display.unitDisplay = display.tooltipDisplay.appendChild(document.createElement("span"));
+		display.unitDisplay.textContent = unit;
 		display.valueDisplay.addEventListener('keydown', keyDownHandler);
 		display.valueDisplay.addEventListener('focus', valueFocusHandler);
 		display.valueDisplay.addEventListener('blur', blurHandler);

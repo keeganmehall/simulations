@@ -101,6 +101,8 @@ var Plot = function(domParent, xScale, yScale){
 		dotPosUpdate = new Hook(null, null, updateDotPos);
 		dotPosUpdate.subscribe(indVar.value);
 		dotPosUpdate.subscribe(depVar.value);
+		dotPosUpdate.subscribe(depVar.scale().scaleUpdate);
+		dotPosUpdate.subscribe(indVar.scale().scaleUpdate);
 		updateDotPos();
 		
 		domParent.addEventListener('click', function(e){
