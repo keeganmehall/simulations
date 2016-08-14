@@ -60,13 +60,12 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 		
 		var valueFocusHandler = function(){
 			if(quan.editable.value.element === true){
-				console.log('value focus handler');
 				for(var i=0; i<quan.displays.length;i++){
 					quan.displays[i].tooltipDisplay.removeEventListener('mouseleave', mouseLeaveHandler);
 				}
 			
 			
-				var slider = createSlider();
+				console.log(quan.value.dependentObjects);
 			
 				display.sliderTooltip = new Tooltip(slider, 'below', display.tooltipDisplay);
 				slider.addEventListener('mousedown', sliderMouseDownHandler);
@@ -168,6 +167,7 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 			var slider = new Slider({quantity:quan, domParent:sliderWrapper});
 			return sliderWrapper;
 		}
+		slider = createSlider();
 		
 		this.displays.push(display)
 		
