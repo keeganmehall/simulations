@@ -1,9 +1,21 @@
-var Scale = function(minimum, maximum, colorScale){
+var Scale = function(minimum, maximum, label, unit, colorScale){
 	var scale = this;
 	this.min = minimum;
 	this.max = maximum;
 	var min = minimum.value.element;
 	var max = maximum.value.element;
+	var axisLabelStr = '';
+	if(!label){
+		label = ''
+	}else{axisLabelStr += label}
+	
+	if(!unit){
+		unit = ''
+	}else{
+		if(axisLabelStr !== ''){
+			axisLabelStr += ('/'+unit);
+		}
+	}
 	this.getColor = function(value){
 		var blue = Math.round(255*(1-(value - min)/(max-min)));
 		var red = Math.round(255*(value - min)/(max-min));
@@ -17,7 +29,7 @@ var Scale = function(minimum, maximum, colorScale){
 	this.scaleUpdate.subscribe(minimum.value);
 	this.scaleUpdate.subscribe(maximum.value);
 	
-	this.addAxis = function(domParent, start, length, direction){
+	this.addAxis = function(domParent, start, length, direction, slider){
 		var uid = app.uids.push(app.uids.length)-1;
 		var plot = d3.select(domParent)
 
@@ -30,7 +42,7 @@ var Scale = function(minimum, maximum, colorScale){
 		}
 		
 		
-		//Create the Scale we will use for the Axis
+		
 
 		var translation;
 		var end;
@@ -59,6 +71,23 @@ var Scale = function(minimum, maximum, colorScale){
 			end = {x:start.x+length, y:start.y};
 			grad = {x1:1, y1:0.5, x2:0, y2:0.5};
 			rect = {x:end.x, y:end.y, width:length, height:axisWidth};
+		}
+		
+		
+		if(slider !== true){
+			var labelLoc;
+			if(direction === 'right' || direction === 'left'){
+				labelLoc = {x:(start.x+end.x)/2, y:start.y+35};
+			} else if(direction === 'up' || direction === 'down'){
+				labelLoc = {x:start.x - 33, y:(start.y+end.y)/2}
+			}
+			
+			var axisLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+			domParent.appendChild(axisLabel);
+			axisLabel.textContent = axisLabelStr;
+			axisLabel.setAttribute('text-anchor', 'middle');
+			axisLabel.setAttribute('x', labelLoc.x);
+			axisLabel.setAttribute('y', labelLoc.y);
 		}
 	
 		var domain = function(){

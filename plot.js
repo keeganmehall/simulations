@@ -6,11 +6,12 @@ var Plot = function(domParent, xScale, yScale){
 	var height = domParent.getBoundingClientRect().height;
 	
 	
-	var origin = {x:30, y:height-30}
-	xAxisScale = xScale.addAxis(domParent, origin, width-60, 'right');
+	var origin = {x:50, y:height-40}
+	xAxisScale = xScale.addAxis(domParent, origin, width-70, 'right');
 	yAxisScale = yScale.addAxis(domParent, origin, height-60, 'up');
 	var svgBoundingRect = domParent.getBoundingClientRect();
-	////////////////////////////////////////////////////////FIX TOPO SORT
+	var xEnd = xAxisScale.axisEnd;
+	var yEnd = yAxisScale.axisEnd;
 	
 
 	
@@ -32,7 +33,7 @@ var Plot = function(domParent, xScale, yScale){
 			var solution = depVar.functionOf(indVar);
 			var lineData = [];
 			for(var x = indMin; x < indMax; x+=(indMax-indMin)/100){
-				lineData.push({x:xAxisScale.axisScale(x)+origin.x, y:yAxisScale.axisScale(solution.element.at(x))+height-origin.y});
+				lineData.push({x:xAxisScale.axisScale(x)+origin.x, y:yAxisScale.axisScale(solution.element.at(x))+yEnd.y});
 			}
 			var lineFunction = d3.svg.line()
 				.x(function(d){return d.x})
@@ -94,7 +95,7 @@ var Plot = function(domParent, xScale, yScale){
 		dot.node().addEventListener('mousedown', dotMouseDownHandler);
 		var updateDotPos = function(){
 			var dotXPos = xAxisScale.axisScale(indVar.value.element)+origin.x;
-			var dotYPos = yAxisScale.axisScale(depVar.value.element)+height-origin.y;
+			var dotYPos = yAxisScale.axisScale(depVar.value.element)+yEnd.y;
 			dot.attr('cx', dotXPos)
 				.attr('cy', dotYPos);
 		}

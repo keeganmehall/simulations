@@ -64,9 +64,6 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 					quan.displays[i].tooltipDisplay.removeEventListener('mouseleave', mouseLeaveHandler);
 				}
 			
-			
-				console.log(quan.value.dependentObjects);
-			
 				display.sliderTooltip = new Tooltip(slider, 'below', display.tooltipDisplay);
 				slider.addEventListener('mousedown', sliderMouseDownHandler);
 			}

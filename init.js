@@ -1,6 +1,6 @@
 var maxVoltage = new Quantity('VMax', 10, 'V');
 var minVoltage = new Quantity('VMin', 0, 'V');
-var app = {voltageScale: new Scale(minVoltage,maxVoltage, true), uids: []};
+var app = {voltageScale: new Scale(minVoltage,maxVoltage, 'V', 'V', true), uids: []};
 
 window.onload = function(){
 //Quantity
@@ -8,7 +8,7 @@ var quanDisplay = document.getElementById('quan');
 
 var startTime = new Quantity('tMin', 0, 's', null);
 var endTime = new Quantity('tMax', 30, 's', null);
-var timeScale = new Scale(startTime, endTime);
+var timeScale = new Scale(startTime, endTime, 't', 's', false);
 
 
 /*
@@ -50,11 +50,11 @@ var nodeE = new Node("nodeE", {x:20, y:150}, ve, circuitDiagram, 'hidden');
 //resistor
 var minResist = new Quantity('null', 0, 'Ohm');
 var maxResist = new Quantity('null', 10, 'Ohm');
-var resistanceScale = new Scale(minResist, maxResist);
+var resistanceScale = new Scale(minResist, maxResist, 'R', 'Ohm', false);
 
 var minCap = new Quantity('null', 0, 'F');
 var maxCap = new Quantity('null', 10, 'F');
-var capacitanceScale = new Scale(minCap, maxCap);
+var capacitanceScale = new Scale(minCap, maxCap, 'C', 'F', false);
 
 var r1 = new Quantity('r1', 2, 'Ohm', resistanceScale);
 var r2 = new Quantity('R', 5, 'Ohm', resistanceScale);

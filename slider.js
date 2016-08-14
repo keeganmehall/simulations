@@ -21,7 +21,7 @@ var Slider = function(input){
 	
 	domParent.appendChild(sliderSVG);
 	var svgLocationLeft = sliderSVG.getBoundingClientRect().left+domParent.getBoundingClientRect().left;
-	var sliderScale = scale.addAxis(sliderSVG, {x:handleWidth/2, y:handleHeight}, width, 'right');
+	var sliderScale = scale.addAxis(sliderSVG, {x:handleWidth/2, y:handleHeight}, width, 'right', true);
 	
 	var gradient = d3.select(sliderSVG)
 		.append('defs')
