@@ -49,7 +49,7 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 	
 	
 	
-	var inputChanged = false;
+	this.inputChanged = false;
 	
 	this.addDisplay = function() {
 		var display = {};
@@ -67,8 +67,8 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 			
 				var slider = createSlider();
 			
-				display.sliderTooltip = new Tooltip(slider.node(), 'below', display.valueDisplay);
-				slider.node().addEventListener('mousedown', sliderMouseDownHandler);
+				display.sliderTooltip = new Tooltip(slider, 'below', display.valueDisplay);
+				slider.addEventListener('mousedown', sliderMouseDownHandler);
 			}
 		}		
 				
@@ -76,14 +76,14 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 		var slideEventHandler = function(e,newValue){
 			quan.animationRunning.value.set(false);
 			quan.value.set(newValue);
-			inputChanged = false;
+			quan.inputChanged = false;
 		}
 		
 		var mouseEnterHandler = function(){
 			for(var i=0; i<quan.displays.length;i++){
 				quan.displays[i].valueTooltip = new Tooltip(quan.displays[i].valueDisplay, 'covering', quan.displays[i].domObject);
 				quan.displays[i].valueDisplay.textContent = quan.value.element.toPrecision(2)+unit;
-				quan.displays[i].valueDisplay.addEventListener('input', function(){inputChanged = true});
+				quan.displays[i].valueDisplay.addEventListener('input', function(){quan.inputChanged = true});
 			}
 			display.valueDisplay.addEventListener('mouseleave', mouseLeaveHandler);
 			
@@ -105,7 +105,7 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 				quan.displays[i].valueTooltip = new Tooltip(quan.displays[i].valueDisplay, 'covering', quan.displays[i].domObject);
 				quan.displays[i].valueTooltip.domObject.textContent = quan.value.element.toPrecision(2)+unit;
 				quan.displays[i].valueTooltip.domObject.addEventListener('focus', valueFocusHandler);
-				quan.displays[i].valueTooltip.domObject.addEventListener('input', function(){inputChanged = true});
+				quan.displays[i].valueTooltip.domObject.addEventListener('input', function(){quan.inputChanged = true});
 			}
 			display.valueTooltip.domObject.focus();
 		}
@@ -119,7 +119,7 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 				}
 			}
 			
-			if(inputChanged){
+			if(quan.inputChanged){
 				var newValue = parseFloat(display.valueDisplay.textContent)
 				if(!isNaN(newValue)){
 					quan.animationRunning.value.set(false);
@@ -160,17 +160,9 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 		}
 			
 		var createSlider = function(){
-			var slider = d3.select(document.createElement("div"))
-			slider
-				.style('width', '100px')
-				.style('background-color', 'white')
-				.call(
-					d3.slider()
-						.axis(true).min(quan.scale().min.value.element).max(quan.scale().max.value.element)
-						.value(quan.value.element)
-						.on('slide',slideEventHandler)
-				);
-			return slider;
+			var sliderWrapper = document.createElement("div");
+			var slider = new Slider({quantity:quan, domParent:sliderWrapper});
+			return sliderWrapper;
 		}
 		
 		this.displays.push(display)
