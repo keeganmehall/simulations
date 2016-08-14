@@ -7,7 +7,7 @@ window.onload = function(){
 var quanDisplay = document.getElementById('quan');
 
 var startTime = new Quantity('tMin', 0, 's', null);
-var endTime = new Quantity('tMax', 30, 's', null);
+var endTime = new Quantity('tMax', 15, 's', null);
 var timeScale = new Scale(startTime, endTime, 't', 's', false);
 
 
@@ -53,12 +53,11 @@ var maxResist = new Quantity('null', 10, 'Ohm');
 var resistanceScale = new Scale(minResist, maxResist, 'R', 'Ohm', false);
 
 var minCap = new Quantity('null', 0, 'F');
-var maxCap = new Quantity('null', 10, 'F');
+var maxCap = new Quantity('null', 2, 'F');
 var capacitanceScale = new Scale(minCap, maxCap, 'C', 'F', false);
 
-var r1 = new Quantity('r1', 2, 'Ohm', resistanceScale);
-var r2 = new Quantity('R', 5, 'Ohm', resistanceScale);
-var c1 = new Quantity('C', 3, 'F', resistanceScale);
+var r2 = new Quantity('R', 4, 'Ohm', resistanceScale);
+var c1 = new Quantity('C', 1, 'F', capacitanceScale);
 var switchOpen = new Bool(true);
 
 var batteryVoltage = new Quantity('V', 8, 'V', app.voltageScale);

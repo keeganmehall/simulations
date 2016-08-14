@@ -8,30 +8,30 @@ var Component = function(input){
 	if(this.type === 'resistor'){
 		var l = 80; // resistor length
 		var W = 30; // max width
-		var s = 10; // width scale
+		var s = function(){return component.resistance.scale().max.value.element}; // width scale
 		var n = 3;
 		var lineWidth = 4;
 		var w = function(){
-			return 0.01+(W - Math.pow(W,1-component.resistance.value.element/s))/2;
+			return W/4+(W/2 - Math.pow(W/2,1-component.resistance.value.element/s()))/2;
 		}
 	} else if(this.type === 'capacitor'){
 		var l = 8;  // distance between capacitor plates
 		var W = 40; // max width
-		var s = 10; // width scale
+		var s = function(){return component.capacitance.scale().max.value.element}; // width scale
 		var n = 3;
 		var lineWidth = 4;
 		var w = function(){
-			return 0.01+(W - Math.pow(W,1-component.capacitance.value.element/s))/2;
+			return W/4+(W/2 - Math.pow(W/2,1-component.capacitance.value.element/s()))/2;
 		}
 	} else if(this.type === 'battery'){
 		var l = 24;
 		var W = 50;
-		var s = 10;
+		var s = function(){return component.voltage.scale().max.value.element};
 		var n = 2; //Do not change
 		var r = 2; //ratio between length of short and long lines
 		var lineWidth = 4;
 		var w = function(){
-			return 0.01+(W - Math.pow(W,1-component.voltage.value.element/s))/2;;
+			return W/4+(W/2 - Math.pow(W/2,1-component.voltage.value.element/s()))/2;;
 		}
 	} else if(this.type === 'switch'){
 		var l = 40;
@@ -67,10 +67,13 @@ var Component = function(input){
 	
 	if(this.type === 'resistor'){
 		width.subscribe(this.resistance.value);
+		width.subscribe(this.resistance.scale().scaleUpdate);
 	} else if(this.type === 'capacitor'){
 		width.subscribe(this.capacitance.value);
+		width.subscribe(this.capacitance.scale().scaleUpdate);
 	} else if(this.type === 'battery'){
 		width.subscribe(this.voltage.value);
+		width.subscribe(this.voltage.scale().scaleUpdate);
 	} else if(this.type === 'switch'){
 		var transformSwitch;
 		var updateSwitch = function(){
