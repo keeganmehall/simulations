@@ -37,7 +37,7 @@ var SourceFunction = function(input){
 		//var spline = numeric.spline(tValueArray.concat([input.time.scale().max.value.element]), vValueArray.concat([input.sourceNode.voltage.value.element]));
 
 		update = function(){
-			while(tValueArray[tValueArray.length-1] > input.time.value.element){
+			while(tValueArray[tValueArray.length-1] >= input.time.value.element){
 				tValueArray.pop();
 				vValueArray.pop();
 			}
