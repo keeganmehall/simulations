@@ -135,6 +135,7 @@ var Slider = function(input){
 	sliderSVG.addEventListener('click', function(e){
 		if(sliderDragged === false){
 			svgLocationLeft = sliderSVG.getBoundingClientRect().left;
+			quantity.animationRunning.value.set(false);
 			setValFromMouse(e.clientX, quantity, handleWidth/2);
 		}
 	})
