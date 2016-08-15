@@ -7,13 +7,38 @@ var Plot = function(domParent, xScale, yScale){
 	
 	
 	var origin = {x:55, y:height-40}
-	xAxisScale = xScale.addAxis(domParent, origin, width-75, 'right');
+	xAxisScale = xScale.addAxis(domParent, origin, width-80, 'right');
 	yAxisScale = yScale.addAxis(domParent, origin, height-60, 'up');
 	var svgBoundingRect = domParent.getBoundingClientRect();
 	var xEnd = xAxisScale.axisEnd;
 	var yEnd = yAxisScale.axisEnd;
 	
-
+	var lineLabels = [];
+	var compareFunc = function(a, b){return a.linePosY-b.linePosY}
+	var labHeight = 18;
+	var labelPosX = xEnd.x;
+	
+	var positionLineLabels = function(){
+		var offsets = [];
+		lineLabels = lineLabels.sort(compareFunc);
+		for(var i = 0; i<lineLabels.length; i++){
+			if(lineLabels[i-1]){
+				if(lineLabels[i].linePosY - (lineLabels[i-1].linePosY+offsets[i-1]) < labHeight){
+					offsets.push(labHeight-(lineLabels[i].linePosY - (lineLabels[i-1].linePosY+offsets[i-1])));
+				} else{
+					offsets.push(0);
+				}
+			}else{
+				offsets.push(0);
+			}
+		}
+		for(var i=0; i<lineLabels.length; i++){
+			lineLabels[i].domObject.setAttribute('x', labelPosX);
+			lineLabels[i].domObject.setAttribute('y', (lineLabels[i].linePosY + offsets[i]));
+		}
+	}
+	var lineLabelsPosHook = new Hook(null, null, positionLineLabels);
+	
 	
 	this.addPlot = function(indVar, depVar){
 		if(indVar.scale() !== xScale || depVar.scale() !== yScale){
@@ -26,12 +51,13 @@ var Plot = function(domParent, xScale, yScale){
 			.attr('stroke-width', 2)
 			.attr('fill', 'none');
 		
+		var lineData;
 		var drawPlot = function(){
 			//if(linePlot) domParent.removeChild(linePlot.node());
 			var indMin = indVar.scale().min.value.element;
 			var indMax = indVar.scale().max.value.element;
 			var solution = depVar.functionOf(indVar);
-			var lineData = [];
+			lineData = [];
 			for(var x = indMin; x < indMax; x+=(indMax-indMin)/100){
 				lineData.push({x:xAxisScale.axisScale(x)+origin.x, y:yAxisScale.axisScale(solution.element.at(x))+yEnd.y});
 			}
@@ -110,6 +136,21 @@ var Plot = function(domParent, xScale, yScale){
 			indVar.animationRunning.value.set(false);
 			setValFromMouse(e.clientX, indVar);
 		})
+		var lineLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+		lineLabel.textContent = depVar.label;
+		lineLabel.setAttribute('class', 'mt');
+		var lineLabelObj = {domObject:lineLabel}
+		var updateLineLabelPos = function(){
+			lineLabelObj.linePosY = lineData[lineData.length-1].y;
+		}
+		
+		var lineLabelPosUpdate = new Hook(null, null, updateLineLabelPos);
+		lineLabelPosUpdate.subscribe(linePlotUpdate);
+		lineLabelsPosHook.subscribe(lineLabelPosUpdate);
+		lineLabels.push(lineLabelObj);
+		domParent.appendChild(lineLabel);
+		updateLineLabelPos();
+		positionLineLabels();
 	}
 	
 	

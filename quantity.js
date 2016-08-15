@@ -1,4 +1,5 @@
 var Quantity = function(label, initialValue, unit, scale, editable) {
+	this.label = label;
 	var quan = this;
 	if(!unit){
 		unit = '';
