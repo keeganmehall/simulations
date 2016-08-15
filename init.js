@@ -118,11 +118,12 @@ quan.appendChild(time.addDisplay());
 d3.select(quanDisplay).append('span').text('   ');
 
 quan.appendChild(time.animationRunning.addToggle('Play', 'Pause'));
-d3.select(quanDisplay).append('span').text('   ');
-quanDisplay.appendChild(playbackSpeed.addDisplay());
-d3.select(quanDisplay).append('span').text('   ');
-quan.appendChild(time.addDisplay());
-d3.select(quanDisplay).append('span').text('   ');
+quanDisplay.appendChild(time.addButton(0, 't=0'));
+d3.select(quanDisplay).append('span').text('   Speed:');
+quanDisplay.appendChild(playbackSpeed.addButton(1/2, '1/2x'));
+quanDisplay.appendChild(playbackSpeed.addButton(1, '1x'));
+quanDisplay.appendChild(playbackSpeed.addButton(2, '2x'));
+
 
 
 

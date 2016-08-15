@@ -208,8 +208,19 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 	
 	this.addButton = function(value, label){
 		var button = document.createElement('button');
+		var updateButton = function(){
+			if(quan.value.element === value){
+				button.disabled = true;
+			}else{
+				button.disabled = false;
+			}
+		}
+		var buttonHook = new Hook(null, null, updateButton);
+		buttonHook.subscribe(quan.value);
+		updateButton();
 		button.textContent = label;
 		button.addEventListener('click', function(){
+			quan.animationRunning.value.set(false);
 			quan.value.set(value);
 		});
 		return button;
