@@ -61,6 +61,7 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 		
 		var valueFocusHandler = function(){
 			if(quan.editable.value.element === true){
+				console.log('quan.editable.value.element === true');
 				for(var i=0; i<quan.displays.length;i++){
 					quan.displays[i].tooltipDisplay.removeEventListener('mouseleave', mouseLeaveHandler);
 				}
@@ -160,11 +161,15 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 			display.valueDisplay.focus();
 		})
 		
-		if(this.editable.value.element === true){
-			display.valueDisplay.contentEditable = 'true';
-		} else{
-			display.valueDisplay.contentEditable = 'false';
+		var updateEditableState = function(){
+			if(quan.editable.value.element === true){
+				display.valueDisplay.contentEditable = 'true';
+			} else{
+				display.valueDisplay.contentEditable = 'false';
+			}
 		}
+		var EditableStateUpdate = new Hook(null, null, updateEditableState)
+		EditableStateUpdate.subscribe(quan.editable.value);
 			
 		var createSlider = function(){
 			var sliderWrapper = document.createElement("div");

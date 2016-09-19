@@ -48,7 +48,7 @@ var r2 = new Quantity('R', 4, 'Ohm', resistanceScale);
 var c1 = new Quantity('C', 1, 'F', capacitanceScale);
 
 
-var batteryVoltage = new Quantity('V', 8, 'V', app.voltageScale);
+var batteryVoltage = new Quantity('Vs', 8, 'V', app.voltageScale);
 
 
 var cap1Input = {label:'capacitor1', type:'capacitor', startNode:nodeB, endNode:nodeC, capacitance:c1, domParent:circuitDiagram}
@@ -70,7 +70,7 @@ var resistor2 = new Component(resistor2Input);
 
 var wire = new Component(wireInput);
 
-var sourceFunction = new SourceFunction({type:'node voltage', sourceNode:nodeA, time:time})
+var sourceFunction = new ForcingFn({type:'node voltage', forcedQuan:batteryVoltage, time:time})
 var mainCircuit = new RCCircuit({sourceFunction:sourceFunction, middle:nodeB, ground:nodeC, resistance:resistor2.resistance, capacitance:capacitor1.capacitance})
 
 
@@ -94,7 +94,7 @@ plotDiv.appendChild(endTime.addDisplay());
 
 var mainPlot = new Plot(plotSVG, timeScale, app.voltageScale);
 mainPlot.addPlot(time, vb);
-mainPlot.addPlot(time, va);
+mainPlot.addPlot(time, batteryVoltage);
 
 
 var vaOfTime = va.functionOf(time);
@@ -113,7 +113,7 @@ quanDisplay.appendChild(playbackSpeed.addButton(1, '1x'));
 quanDisplay.appendChild(playbackSpeed.addButton(2, '2x'));
 
 
-
+document.body.appendChild(sourceFunction.addMenu());
 
 
 var animation = new Animation(time, playbackSpeed);

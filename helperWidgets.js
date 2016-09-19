@@ -1,28 +1,3 @@
-//ColorScale
-/*var Scale = function(minimum, maximum){
-	var scale = this;
-	this.min = minimum;
-	this.max = maximum;
-	var min = minimum.value.element;
-	var max = maximum.value.element;
-	this.getColor = function(value){
-		var blue = Math.round(255*(1-(value - min)/(max-min)));
-		var red = Math.round(255*(value - min)/(max-min));
-		return(d3.rgb(red,0,blue));
-	}
-	var updateScale = function(){
-		min = minimum.value.element;
-		max = maximum.value.element;
-	}
-	this.scaleUpdate = new Hook('null', this, updateScale); 
-	this.scaleUpdate.subscribe(minimum.value);
-	this.scaleUpdate.subscribe(maximum.value);
-	
-	this.addAxis = function(){
-	}
-}*/
-
-
 //Tooltip
 var Tooltip = function(domObject, position, domParent){
 	var tooltip = this;
