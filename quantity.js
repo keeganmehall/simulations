@@ -170,6 +170,7 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 		}
 		var EditableStateUpdate = new Hook(null, null, updateEditableState)
 		EditableStateUpdate.subscribe(quan.editable.value);
+		updateEditableState();
 			
 		var createSlider = function(){
 			var sliderWrapper = document.createElement("div");
