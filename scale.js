@@ -1,5 +1,10 @@
 var Scale = function(minimum, maximum, label, unit, colorScale){
 	var scale = this;
+	if(typeof minimum === 'number' && typeof maximum === 'number'){
+		minimum = new Quantity('', minimum);
+		maximum = new Quantity('', maximum);
+	}
+	
 	this.min = minimum;
 	this.max = maximum;
 	var min = minimum.value.element;

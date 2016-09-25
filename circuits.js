@@ -27,6 +27,18 @@ var ForcingFn = function(input){
 	var update = function(){};
 	this.equation = new Hook(null, this, update);
 	
+	//Create menu
+	forcingFn.menu = document.createElement('div');
+	d3.select(forcingFn.menu).append('h3').text('Source Behavior:');
+	forcingFn.typeDropdown = document.createElement('select');
+	forcingFn.typeDropdown.innerHTML = "<option value='node voltage'> Node Voltage </option> <option value='constant'> Constant </option>  <option value='sine'> Sine </option>"
+	forcingFn.menu.appendChild(forcingFn.typeDropdown);
+	forcingFn.typeDropdown.addEventListener('change', function(){
+		setType(forcingFn.typeDropdown.value)
+	});
+	forcingFn.controlsDiv = document.createElement('div');
+	forcingFn.menu.appendChild(forcingFn.controlsDiv);
+	
 	var setType = function(type){
 		if(type === 'node voltage' || type === 'constant'){
 			forcingFn.equation.subscribe(input.forcedQuan.value);
@@ -50,7 +62,6 @@ var ForcingFn = function(input){
 			forcingFn.evaluation.subscribe(input.time.value);
 			input.forcedQuan.value.subscribe(forcingFn.evaluation);
 			input.forcedQuan.editable.value.set(false);
-			console.log(input.forcedQuan);
 		} else{
 			if(forcingFn.evaluation){
 				forcingFn.evaluation.unsubscribe(input.time.value);
@@ -90,12 +101,36 @@ var ForcingFn = function(input){
 				} else{return vValueArray[i]}
 			})
 		}else if(type === 'sine'){
+			forcingFn.freq = new Quantity('f', 0.5, 'Hz', new Scale(0,1));
+			forcingFn.amplitude = new Quantity('A', 3, 'V', app.voltageScale);
+			forcingFn.center = new Quantity('Center', 3, 'V', app.voltageScale);
 			forcingFn.equation.update = function(){}
 			forcingFn.equation.set(function(t){	
-				return 5*Math.sin(t)+5;
-			})
+				var ans = forcingFn.amplitude.value.element*
+					Math.sin(2*Math.PI*forcingFn.freq.value.element*t)+forcingFn.center.value.element;
+				//console.log(forcingFn.amplitude.value.element, forcingFn.freq.value.element, forcingFn.freq.value.element);
+				//console.log(ans);
+				return ans;
+			});
+			forcingFn.equation.subscribe(forcingFn.freq.value);
+			forcingFn.equation.subscribe(forcingFn.amplitude.value);
+			forcingFn.equation.subscribe(forcingFn.center.value);
 		}
 		
+		//Show Controls
+		var controlDisplays = [];
+		controlDisplays.forEach(function(display){
+			forcingFn.menu.removeChild(display);
+		})
+		controlDisplays = []
+		if(type === 'node voltage' || type === 'constant'){
+			//no controls
+		}else if(type === 'sine'){
+			controlDisplays.push(forcingFn.freq.addDisplay(), forcingFn.amplitude.addDisplay(), forcingFn.center.addDisplay());
+		}
+		controlDisplays.forEach(function(display){
+			forcingFn.controlsDiv.appendChild(display);
+		})
 		
 		input.time.animationRunning.value.set(false);
 		input.time.value.set(0);
@@ -113,14 +148,6 @@ var ForcingFn = function(input){
 	
 	
 	this.addMenu = function(){
-		forcingFn.menu = document.createElement('div');
-		d3.select(forcingFn.menu).append('h3').text('Source Behaviour:');
-		forcingFn.typeDropdown = document.createElement('select');
-		forcingFn.typeDropdown.innerHTML = "<option value='node voltage'> Node Voltage </option> <option value='constant'> Constant </option>  <option value='sine'> Sine </option>"
-		forcingFn.menu.appendChild(forcingFn.typeDropdown);
-		forcingFn.typeDropdown.addEventListener('change', function(){
-			setType(forcingFn.typeDropdown.value)
-		});
 		
 		return forcingFn.menu;
 	}

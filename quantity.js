@@ -61,7 +61,6 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 		
 		var valueFocusHandler = function(){
 			if(quan.editable.value.element === true){
-				console.log('quan.editable.value.element === true');
 				for(var i=0; i<quan.displays.length;i++){
 					quan.displays[i].tooltipDisplay.removeEventListener('mouseleave', mouseLeaveHandler);
 				}
@@ -142,7 +141,7 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 		
 		display.domObject = document.createElement('span');
 		display.domObject.textContent = label;
-		display.domObject.className = "mt"
+		display.domObject.className = "quan-display"
 		display.domObject.addEventListener('mouseenter', mouseEnterHandler);
 		display.domObject.tabindex = '0';
 		display.domObject.addEventListener('focus', quanFocusHandler);
