@@ -41,11 +41,11 @@ var maxResist = new Quantity('null', 10, 'Ohm');
 var resistanceScale = new Scale(minResist, maxResist, 'R', 'Ohm', false);
 
 var minCap = new Quantity('null', 0, 'F');
-var maxCap = new Quantity('null', 2, 'F');
+var maxCap = new Quantity('null', 1, 'F');
 var capacitanceScale = new Scale(minCap, maxCap, 'C', 'F', false);
 
 var r2 = new Quantity('R', 4, 'Ohm', resistanceScale);
-var c1 = new Quantity('C', 1, 'F', capacitanceScale);
+var c1 = new Quantity('C', 0.5, 'F', capacitanceScale);
 
 
 var batteryVoltage = new Quantity('Vs', 8, 'V', app.voltageScale);
@@ -53,14 +53,14 @@ var batteryVoltage = new Quantity('Vs', 8, 'V', app.voltageScale);
 
 var cap1Input = {label:'capacitor1', type:'capacitor', startNode:nodeB, endNode:nodeC, capacitance:c1, domParent:circuitDiagram}
 var resistor2Input = {label:'resistor2', type:'resistor', startNode:nodeA , endNode:nodeB, resistance:r2, domParent:circuitDiagram}
-var batteryInput = {label:'battery', type:'battery', startNode:nodeD, endNode:nodeA, voltage:batteryVoltage, domParent:circuitDiagram}
+var vSourceInput = {label:'vSource', type:'voltageSource', startNode:nodeD, endNode:nodeA, voltage:batteryVoltage, domParent:circuitDiagram}
 
 var wireInput = {label:'wire', type:'wire', startNode:nodeC, endNode:nodeD, domParent:circuitDiagram}
 
 
 var capacitor1 = new Component(cap1Input);
 
-var battery = new Component(batteryInput);
+var voltageSource = new Component(vSourceInput);
 
 var resistor2 = new Component(resistor2Input);
 

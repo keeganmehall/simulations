@@ -140,7 +140,7 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 		
 		
 		display.domObject = document.createElement('span');
-		display.domObject.textContent = label;
+		display.domObject.innerHTML = label;
 		display.domObject.className = "quan-display"
 		display.domObject.addEventListener('mouseenter', mouseEnterHandler);
 		display.domObject.tabindex = '0';
@@ -150,7 +150,7 @@ var Quantity = function(label, initialValue, unit, scale, editable) {
 		display.valueDisplay = display.tooltipDisplay.appendChild(document.createElement("span"));
 		display.valueDisplay.className = 'mt-number';
 		display.unitDisplay = display.tooltipDisplay.appendChild(document.createElement("span"));
-		display.unitDisplay.textContent = unit;
+		display.unitDisplay.innerHTML = unit;
 		display.unitDisplay.className = 'unit';
 		display.valueDisplay.addEventListener('keydown', keyDownHandler);
 		display.valueDisplay.addEventListener('focus', valueFocusHandler);

@@ -23,7 +23,7 @@ var Component = function(input){
 		var w = function(){
 			return W/4+(W/2 - Math.pow(W/2,1-component.capacitance.value.element/s()))/2;
 		}
-	} else if(this.type === 'battery'){
+	} else if(this.type === 'voltageSource'){
 		var l = 24;
 		var W = 50;
 		var s = function(){return component.voltage.scale().max.value.element};
@@ -71,7 +71,7 @@ var Component = function(input){
 	} else if(this.type === 'capacitor'){
 		width.subscribe(this.capacitance.value);
 		width.subscribe(this.capacitance.scale().scaleUpdate);
-	} else if(this.type === 'battery'){
+	} else if(this.type === 'voltageSource'){
 		width.subscribe(this.voltage.value);
 		width.subscribe(this.voltage.scale().scaleUpdate);
 	} else if(this.type === 'switch'){
@@ -215,7 +215,7 @@ var Component = function(input){
 		endColor = new Hook(app.voltageScale.getColor(this.endNode.voltage.value.element), this, updateEndColor);
 		
 		
-	}else if(this.type === 'battery'){
+	}else if(this.type === 'voltageSource'){
 		calcPath = function(w,l,n,x1,y1,x2,y2){
 			var dx = l/n*(x2-x1)/L;
 			var dy = l/n*(y2-y1)/L;
@@ -381,7 +381,7 @@ var Component = function(input){
 	//this.startColor = startColor;
 	//this.endColor = endColor;
 	
-	if(this.type === 'resistor' || this.type === 'capacitor' || this.type === 'battery'){
+	if(this.type === 'resistor' || this.type === 'capacitor' || this.type === 'voltageSource'){
 		var boundingBox = diagram.node().getBBox();
 		var gradStartX = (g1.x-boundingBox.x)/boundingBox.width;
 		var gradStartY = (g1.y-boundingBox.y)/boundingBox.height;
@@ -429,7 +429,7 @@ var Component = function(input){
 			}
 			document.addEventListener('mousedown', documentClickHandler)
 		}
-	}else if(this.type === 'battery'){
+	}else if(this.type === 'voltageSource'){
 		var voltageTooltipDisplay = component.voltage.addDisplay();
 		diagramClickHandler = function(){
 			var voltageTooltip = new Tooltip(voltageTooltipDisplay, 'over', this);

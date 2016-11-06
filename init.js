@@ -53,11 +53,11 @@ var maxResist = new Quantity('null', 10, 'Ohm');
 var resistanceScale = new Scale(minResist, maxResist, 'R', 'Ohm', false);
 
 var minCap = new Quantity('null', 0, 'F');
-var maxCap = new Quantity('null', 2, 'F');
+var maxCap = new Quantity('null', 1, 'F');
 var capacitanceScale = new Scale(minCap, maxCap, 'C', 'F', false);
 
 var r2 = new Quantity('R', 4, 'Ohm', resistanceScale);
-var c1 = new Quantity('C', 1, 'F', capacitanceScale);
+var c1 = new Quantity('C', 0.5, 'F', capacitanceScale);
 var switchOpen = new Bool(true);
 
 var batteryVoltage = new Quantity('V', 8, 'V', app.voltageScale);

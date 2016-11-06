@@ -36,7 +36,8 @@ var ForcingFn = function(input){
 	forcingFn.typeDropdown.addEventListener('change', function(){
 		setType(forcingFn.typeDropdown.value)
 	});
-	forcingFn.controlsDiv = document.createElement('div');
+	controlsDiv = document.createElement('div');
+	forcingFn.controlsDiv = controlsDiv;
 	forcingFn.menu.appendChild(forcingFn.controlsDiv);
 	
 	var setType = function(type){
@@ -103,11 +104,12 @@ var ForcingFn = function(input){
 		}else if(type === 'sine'){
 			forcingFn.freq = new Quantity('f', 0.5, 'Hz', new Scale(0,1));
 			forcingFn.amplitude = new Quantity('A', 3, 'V', app.voltageScale);
-			forcingFn.center = new Quantity('Center', 3, 'V', app.voltageScale);
+			forcingFn.center = new Quantity('C', 3, 'V', app.voltageScale);
+			forcingFn.phase = new Quantity('&phi;', 0, 's', new Scale(0, 3));
 			forcingFn.equation.update = function(){}
 			forcingFn.equation.set(function(t){	
 				var ans = forcingFn.amplitude.value.element*
-					Math.sin(2*Math.PI*forcingFn.freq.value.element*t)+forcingFn.center.value.element;
+					Math.sin(2*Math.PI*forcingFn.freq.value.element*(t + forcingFn.phase.value.element))+forcingFn.center.value.element;
 				//console.log(forcingFn.amplitude.value.element, forcingFn.freq.value.element, forcingFn.freq.value.element);
 				//console.log(ans);
 				return ans;
@@ -115,6 +117,7 @@ var ForcingFn = function(input){
 			forcingFn.equation.subscribe(forcingFn.freq.value);
 			forcingFn.equation.subscribe(forcingFn.amplitude.value);
 			forcingFn.equation.subscribe(forcingFn.center.value);
+			forcingFn.equation.subscribe(forcingFn.phase.value);
 		}
 		
 		//Show Controls
@@ -126,11 +129,33 @@ var ForcingFn = function(input){
 		if(type === 'node voltage' || type === 'constant'){
 			//no controls
 		}else if(type === 'sine'){
-			controlDisplays.push(forcingFn.freq.addDisplay(), forcingFn.amplitude.addDisplay(), forcingFn.center.addDisplay());
+			controlsDiv.appendChild(forcingFn.amplitude.addDisplay());
+			let span1 = document.createElement('span');
+			span1.innerHTML = '*sin(2&pi;';
+			span1.className = 'mt'
+			controlsDiv.appendChild(span1);
+			controlsDiv.appendChild(forcingFn.freq.addDisplay());
+			let span2 = document.createElement('span');
+			span2.innerHTML = '(';
+			span2.className = 'mt'
+			controlsDiv.appendChild(span2);
+			controlsDiv.appendChild(forcingFn.time.addDisplay());
+			let span3 = document.createElement('span');
+			span3.innerHTML = '+';
+			span3.className = 'mt'
+			controlsDiv.appendChild(span3);
+			controlsDiv.appendChild(forcingFn.phase.addDisplay());
+			let span4 = document.createElement('span');
+			span4.innerHTML = '))';
+			span4.className = 'mt'
+			controlsDiv.appendChild(span4);
+			let span5 = document.createElement('span');
+			span5.innerHTML = '+';
+			span5.className = 'mt'
+			controlsDiv.appendChild(span5);
+			controlsDiv.appendChild(forcingFn.center.addDisplay());
+			
 		}
-		controlDisplays.forEach(function(display){
-			forcingFn.controlsDiv.appendChild(display);
-		})
 		
 		input.time.animationRunning.value.set(false);
 		input.time.value.set(0);
