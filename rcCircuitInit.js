@@ -1,13 +1,13 @@
-var maxVoltage = new Quantity('VMax', 10, 'V');
-var minVoltage = new Quantity('VMin', 0, 'V');
+var maxVoltage = new Quantity('Vmax', 10, 'V');
+var minVoltage = new Quantity('Vmin', 0, 'V');
 var app = {voltageScale: new Scale(minVoltage,maxVoltage, 'V', 'V', true), uids: []};
 
 window.onload = function(){
 //Quantity
 var quanDisplay = document.getElementById('quan');
 
-var startTime = new Quantity('tMin', 0, 's', null);
-var endTime = new Quantity('tMax', 15, 's', null);
+var startTime = new Quantity('tmin', 0, 's', null);
+var endTime = new Quantity('tmax', 15, 's', null);
 var timeScale = new Scale(startTime, endTime, 't', 's', false);
 
 
@@ -108,8 +108,8 @@ quanDisplay.appendChild(playbackSpeed.addButton(1/2, '1/2x'));
 quanDisplay.appendChild(playbackSpeed.addButton(1, '1x'));
 quanDisplay.appendChild(playbackSpeed.addButton(2, '2x'));
 
-
-document.body.appendChild(sourceFunction.addMenu());
+var sourceMenu = document.getElementById('sourceMenu');
+sourceMenu.appendChild(sourceFunction.addMenu());
 
 
 var animation = new Animation(time, playbackSpeed);

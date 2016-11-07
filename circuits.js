@@ -65,6 +65,7 @@ var ForcingFn = function(input){
 			}
 			forcingFn.evaluation = new Hook(null, null, evaluate);
 			forcingFn.evaluation.subscribe(input.time.value);
+			forcingFn.evaluation.subscribe(forcingFn.equation);
 			input.forcedQuan.value.subscribe(forcingFn.evaluation);
 			input.forcedQuan.editable.value.set(false);
 		} else{
@@ -129,7 +130,7 @@ var ForcingFn = function(input){
 			controlsDiv.removeChild(controlsDiv.firstChild);
 		}
 		if(type === 'node voltage' || type === 'constant'){
-			//no controls
+			//controlsDiv.appendChild(forcingFn.forcedQuan.addDisplay()); ////Add this later after preventing undisplayed quantities from displaying
 		}else if(type === 'sine'){
 			controlsDiv.appendChild(forcingFn.amplitude.addDisplay());
 			let span1 = document.createElement('span');

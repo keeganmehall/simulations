@@ -47,3 +47,28 @@
 	-ms-user-select: none;       /* IE/Edge */
 	user-select: none;  
 }
+
+#description{
+	width: 300px;
+	margin: 0 auto;
+	display:inline;
+	margin-bottom: 50px; 
+	
+}
+
+#content{
+	width:700px;
+	height:400px;
+	float:left;
+	display:inline;
+}
+
+#wrapper{
+	width: 1030px;
+	margin: 0;
+}
+
+#sourceMenu{
+	display:block;
+}
+

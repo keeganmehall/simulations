@@ -65,4 +65,11 @@ var Hook = function(value, parent, update){
 		visitedParents = [];
 		sortParentObjects(this);
 	}
+	
+	this.unsubscribeAll = function(){
+		var hook = this;
+		this.parentObjects.forEach(function(parentObj){
+			hook.unsubscribe(parentObj);
+		})
+	}
 }

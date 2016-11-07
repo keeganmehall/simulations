@@ -16,6 +16,17 @@
 	<script type="text/javascript" src="rcCircuitInit.js"></script>
 	<title>Series RC Circuit Simulation</title>
 	
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+		ga('create', 'UA-86750011-1', 'auto');
+		ga('send', 'pageview');
+
+	</script>
+	
 	<link rel="stylesheet" href="style.css"></link>
 </head>
 <body>
@@ -23,19 +34,23 @@
 	<div id="quan">
 
 	</div>
-	<div>
+	<div id=wrapper>
+		<div id='content'>
+			<svg xmlns="http://www.w3.org/2000/svg" id="plot" width="350px" height="350px">
+			</svg>
 
-		<svg xmlns="http://www.w3.org/2000/svg" id="circuitDiagram" width="300px" height="300px">
-		</svg>
-		<svg xmlns="http://www.w3.org/2000/svg" id="plot" width="350px" height="350px">
-		</svg>
-	</div>
-	<div>
-		<div id="plotDiv">
+			<svg xmlns="http://www.w3.org/2000/svg" id="circuitDiagram" width="300px" height="300px">
+			</svg>
+			<div id="plotDiv">
+			</div>
+		
 		</div>
-		
-			
-		
+	
+		<div id='description'>
+			<h2>About</h2>
+			A simulation of the behavior of an RC (Resistor-Capacitor) circuit. Values for resistance and capacitance can be changed by clicking on the components. The voltage source can output signals according to three settings selected in the dropdown menu: 'constant', which makes the voltage constant for all time; 'node voltage', which sets the voltage constant for all future time (and therefore can show step responses); and 'sine', which outputs a sinusoidal signal with time. For 'constant' and 'node voltage', the voltage can be set by clicking on the battery. All updates are immediately shown on the graph, and the colors of nodes in the circuits correspond to voltages according to the scale on graph's y axis.
+		</div>
+		<div id='sourceMenu'></div>
 	</div>
 </body>
 </html>
