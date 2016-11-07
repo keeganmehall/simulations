@@ -50,7 +50,7 @@
 
 #description{
 	width: 300px;
-	margin: 0 auto;
+	/*margin: 0 auto;*/
 	display:inline;
 	margin-bottom: 50px; 
 	
@@ -64,11 +64,11 @@
 }
 
 #wrapper{
-	width: 1030px;
+	width: 1050px;
 	margin: 0;
 }
 
 #sourceMenu{
-	display:block;
+	display:inline;
 }
 
