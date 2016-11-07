@@ -30,10 +30,10 @@ var vd = new Quantity('Vd', 0, 'V', app.voltageScale);
 var ve = new Quantity('Ve', 10, 'V', app.voltageScale);
 
 //nodes
-var nodeA = new Node("nodeA", {x:20,y:20}, va, circuitDiagram);
+var nodeA = new Node("nodeA", {x:40,y:20}, va, circuitDiagram);
 var nodeB = new Node("nodeB", {x:280,y:20}, vb, circuitDiagram);
-var nodeC = new Node("nodeC", {x:280,y:280}, vc, circuitDiagram);
-var nodeD = new Node("nodeD", {x:20, y:280}, vd, circuitDiagram, 'hidden');
+var nodeC = new Node("nodeC", {x:280,y:260}, vc, circuitDiagram);
+var nodeD = new Node("nodeD", {x:40, y:260}, vd, circuitDiagram, 'hidden');
 
 //components
 var minResist = new Quantity('null', 0, 'Ohm');
@@ -50,10 +50,11 @@ var c1 = new Quantity('C', 0.5, 'F', capacitanceScale);
 
 var batteryVoltage = new Quantity('Vs', 8, 'V', app.voltageScale);
 
+var sourceFunction = new ForcingFn({type:'node voltage', forcedQuan:batteryVoltage, time:time})
 
 var cap1Input = {label:'capacitor1', type:'capacitor', startNode:nodeB, endNode:nodeC, capacitance:c1, domParent:circuitDiagram}
 var resistor2Input = {label:'resistor2', type:'resistor', startNode:nodeA , endNode:nodeB, resistance:r2, domParent:circuitDiagram}
-var vSourceInput = {label:'vSource', type:'voltageSource', startNode:nodeD, endNode:nodeA, voltage:batteryVoltage, domParent:circuitDiagram}
+var vSourceInput = {label:'vSource', type:'voltageSource', startNode:nodeD, endNode:nodeA, voltage:batteryVoltage, domParent:circuitDiagram, function:sourceFunction}
 
 var wireInput = {label:'wire', type:'wire', startNode:nodeC, endNode:nodeD, domParent:circuitDiagram}
 
@@ -70,7 +71,7 @@ var resistor2 = new Component(resistor2Input);
 
 var wire = new Component(wireInput);
 
-var sourceFunction = new ForcingFn({type:'node voltage', forcedQuan:batteryVoltage, time:time})
+
 var mainCircuit = new RCCircuit({sourceFunction:sourceFunction, middle:nodeB, ground:nodeC, resistance:resistor2.resistance, capacitance:capacitor1.capacitance})
 
 

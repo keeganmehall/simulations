@@ -22,11 +22,11 @@ var ForcingFn = function(input){
 	for(key in input){
 		this[key] = input[key];
 	}
-	
+	var type = input.type;
 	var equation;
 	var update = function(){};
 	this.equation = new Hook(null, this, update);
-	
+	this.typeUpdate = new Hook(null, this, function(){});
 	//Create menu
 	forcingFn.menu = document.createElement('div');
 	d3.select(forcingFn.menu).append('h3').text('Source Behavior:');
@@ -34,13 +34,17 @@ var ForcingFn = function(input){
 	forcingFn.typeDropdown.innerHTML = "<option value='node voltage'> Node Voltage </option> <option value='constant'> Constant </option>  <option value='sine'> Sine </option>"
 	forcingFn.menu.appendChild(forcingFn.typeDropdown);
 	forcingFn.typeDropdown.addEventListener('change', function(){
-		setType(forcingFn.typeDropdown.value)
+		type = forcingFn.typeDropdown.value;
+		setType()
 	});
 	controlsDiv = document.createElement('div');
 	forcingFn.controlsDiv = controlsDiv;
 	forcingFn.menu.appendChild(forcingFn.controlsDiv);
 	
-	var setType = function(type){
+	var controlDisplays = [];
+	var setType = function(){
+		forcingFn.type = type;
+		forcingFn.typeUpdate.set(null);
 		if(type === 'node voltage' || type === 'constant'){
 			forcingFn.equation.subscribe(input.forcedQuan.value);
 		} else{
@@ -121,11 +125,9 @@ var ForcingFn = function(input){
 		}
 		
 		//Show Controls
-		var controlDisplays = [];
-		controlDisplays.forEach(function(display){
-			forcingFn.menu.removeChild(display);
-		})
-		controlDisplays = []
+		while (controlsDiv.firstChild) {
+			controlsDiv.removeChild(controlsDiv.firstChild);
+		}
 		if(type === 'node voltage' || type === 'constant'){
 			//no controls
 		}else if(type === 'sine'){
@@ -154,7 +156,6 @@ var ForcingFn = function(input){
 			span5.className = 'mt'
 			controlsDiv.appendChild(span5);
 			controlsDiv.appendChild(forcingFn.center.addDisplay());
-			
 		}
 		
 		input.time.animationRunning.value.set(false);

@@ -1,6 +1,6 @@
 var Component = function(input){
 	var component = this;
-	//label, type, startNode, endNode, parameter, domParent
+	//label, type, startNode, endNode, parameter, domParent, (voltage source: function)
 	for(key in input){
 		this[key] = input[key];
 	}
@@ -24,14 +24,14 @@ var Component = function(input){
 			return W/4+(W/2 - Math.pow(W/2,1-component.capacitance.value.element/s()))/2;
 		}
 	} else if(this.type === 'voltageSource'){
-		var l = 24;
-		var W = 50;
+		var l = 40;
+		//var W = 50;
 		var s = function(){return component.voltage.scale().max.value.element};
 		var n = 2; //Do not change
 		var r = 2; //ratio between length of short and long lines
 		var lineWidth = 4;
 		var w = function(){
-			return W/4+(W/2 - Math.pow(W/2,1-component.voltage.value.element/s()))/2;;
+			return 0;
 		}
 	} else if(this.type === 'switch'){
 		var l = 40;
@@ -103,7 +103,15 @@ var Component = function(input){
 			if(data[i].mx){
 				svgPathArray.push('M',data[i].mx,data[i].my);
 			}
-			svgPathArray.push('L',data[i].x,data[i].y);
+			if(data[i].x){
+				svgPathArray.push('L',data[i].x,data[i].y);
+			}
+			if(data[i].c1x){
+				svgPathArray.push('C');
+				svgPathArray.push(data[i].c1x,data[i].c1y);
+				svgPathArray.push(data[i].c2x,data[i].c2y);
+				svgPathArray.push(data[i].c3x,data[i].c3y);
+			}
 		}
 		return svgPathArray.join(' ');
 	}
@@ -217,56 +225,128 @@ var Component = function(input){
 		
 	}else if(this.type === 'voltageSource'){
 		calcPath = function(w,l,n,x1,y1,x2,y2){
-			var dx = l/n*(x2-x1)/L;
-			var dy = l/n*(y2-y1)/L;
-			var vx = w*(y2-y1)/L
-			var vy = w*(x1-x2)/L
-			var c1 = {x:(L-l)/(2*L)*(x2-x1)+x1, y:(L-l)/(2*L)*(y2-y1)+y1}; 
-			var c2 = {x:(L-l/3)/(2*L)*(x2-x1)+x1, y:(L-l/3)/(2*L)*(y2-y1)+y1};
-			var c3 = {x:x2-(L-l/3)/(2*L)*(x2-x1), y:y2-(L-l/3)/(2*L)*(y2-y1)};
-			var c4 = {x:x2-(L-l)/(2*L)*(x2-x1), y:y2-(L-l)/(2*L)*(y2-y1)};
+			g1 = {x:(L-l)/(2*L)*(x2-x1)+x1, y:(L-l)/(2*L)*(y2-y1)+y1}; 
+			g2 = {x:x2-(L-l)/(2*L)*(x2-x1), y:y2-(L-l)/(2*L)*(y2-y1)};
 			
-			var data = [{x:x1,y:y1}, {x:c1.x, y:c1.y}];
-			
-			var mdps = [c1,c2,c3,c4]; //midpoints; //order is g3,g1,g2,g4 for gradient
-			
-			for(var i = 0; i<n; i++){
-				data.push({mx:mdps[2*i].x+vx/r, my:mdps[2*i].y+vy/r, x:mdps[2*i].x-vx/r, y:mdps[2*i].y-vy/r},
-					{mx:mdps[2*i+1].x+vx, my:mdps[2*i+1].y+vy, x:mdps[2*i+1].x-vx, y:mdps[2*i+1].y-vy})
+
+			return [{x:x1,y:y1}, {x:x2, y:y2}];
+		}
+		var nx = (y2-y1)/L;
+		var ny = (x1-x2)/L;
+		var px = (x2-x1)/L;
+		var py = (y2-y1)/L;
+		var midX = (x1+x2)/2;
+		var midY = (y1+y2)/2;
+		var line1, line2;
+		this.addDomObject = function(){
+			calcPath(w,l,n,x1,y1,x2,y2);
+			var line1 = diagramG.append('line')
+				.attr('x1', x1)
+				.attr('y1', y1)
+				.attr('x2', g1.x)
+				.attr('y2', g1.y)
+				.attr('stroke-width', lineWidth);
+
+			var line2 = diagramG.append('line')
+				.attr('x1', g2.x)
+				.attr('y1', g2.y)
+				.attr('x2', x2)
+				.attr('y2', y2)
+				.attr('stroke-width', lineWidth);
+				
+			diagram = diagramG.append('circle')
+				.attr('cx', (x1+x2)/2)
+				.attr('cy', (y1+y2)/2)
+				.attr('r', l/2)
+				.attr('fill', 'white')
+				.attr("stroke", 'url(#'+this.label+'gradient)')
+				.attr("stroke-width", lineWidth);
+		
+		
+			var updateStartColor = function(){
+				var newColor = app.voltageScale.getColor(this.parent.startNode.voltage.value.element);
+				this.element = newColor;
+				line1.attr('stroke', newColor);
+				startStop.attr("stop-color", newColor);
+			}
+
+			var updateEndColor = function(){
+				var newColor = app.voltageScale.getColor(this.parent.endNode.voltage.value.element);
+				this.element = newColor;
+				line2.attr('stroke', newColor);
+				endStop.attr("stop-color", newColor);
 			}
 			
-			data.push({mx:c4.x, my:c4.y ,x:x2, y:y2});
+			var typeSpecObjs = [];
 			
-			g1 = c1;
-			g2 = c4;
+			var setType = function(){
+				var type = input.function.type;
+				for(var i = 0; i < typeSpecObjs.length; i++){
+					diagramG.node().removeChild(typeSpecObjs[i]);
+				}
+				typeSpecObjs = [];
+				if(type === 'sine'){
+					var width = 10;
+					var height = 12;
+					var lineData = [{x: midX + nx * width, y:midY + ny * width},
+						{
+							c1x: midX + nx * width / 3 + px * height,
+							c1y: midY + ny * width / 3 + py * height,
+							c2x: midX - nx * width / 3 - px * height,
+							c2y: midY - ny * width / 3 - py * height,
+							c3x: midX - nx * width,
+							c3y: midY - ny * width
+						}
+					];
+					var ac = document.createElementNS("http://www.w3.org/2000/svg", "path");
+					ac.setAttribute('d', lineFunction(lineData));
+					ac.setAttribute('stroke', 'black');
+					ac.setAttribute('fill', 'none');
+					ac.setAttribute('stroke-width', '2px');
+					diagramG.node().appendChild(ac);
+					typeSpecObjs.push(ac);
+				}else if(type === 'constant' || type === 'node voltage'){
+					var size = 10/2;
+					var spread = 0.25*l;
+					
+					var plusLineData = [{x: midX + px * (spread - size), y: midY + py * (spread - size)},
+						{x: midX + px * (spread + size), y: midY + py * (spread + size)},
+						{mx: midX + px * spread + nx * size, my: midY + py * spread + ny * size,
+							x: midX + px * spread - nx * size, y: midY + py * spread - ny * size
+						}];
+					var plus = document.createElementNS("http://www.w3.org/2000/svg", "path");
+					plus.setAttribute('d', lineFunction(plusLineData));
+					plus.setAttribute('stroke', 'black');
+					plus.setAttribute('fill', 'none');
+					plus.setAttribute('stroke-width', '2px');
+					diagramG.node().appendChild(plus);
+					typeSpecObjs.push(plus);
+					
+					var minusLineData = [
+							{x: midX - px * spread + nx * size, y: midY - py * spread + ny * size},
+							{x: midX - px * spread - nx * size, y: midY - py * spread - ny * size}
+						];
+					var minus = document.createElementNS("http://www.w3.org/2000/svg", "path");
+					minus.setAttribute('d', lineFunction(minusLineData));
+					minus.setAttribute('stroke', 'black');
+					minus.setAttribute('fill', 'none');
+					minus.setAttribute('stroke-width', '2px');
+					diagramG.node().appendChild(minus);
+					typeSpecObjs.push(minus);
+				}
+			}
 			
-			return data;
-		}
-		this.addDomObject = function(){
-
-			diagram = diagramG	
-				.append('path')
-				.attr("d", lineFunction(calcPath(width.element,l,n,x1,y1,x2,y2)))
-				.attr("stroke", 'url(#'+this.label+'gradient)')
-				.attr("stroke-width", lineWidth)
-				.attr("fill", "white")
-				.attr('fill-opacity', 0.0)
+			setType();
+			
+			var typeUpdate = new Hook(null, component, setType);
+			typeUpdate.subscribe(input.function.typeUpdate);
+		
+		
+			startColor = new Hook(app.voltageScale.getColor(this.startNode.voltage.value.element), this, updateStartColor);
+			endColor = new Hook(app.voltageScale.getColor(this.endNode.voltage.value.element), this, updateEndColor);
 		}
 		
-		var updateStartColor = function(){
-			var newColor = app.voltageScale.getColor(this.parent.startNode.voltage.value.element);
-			this.element = newColor;
-			startStop.attr("stop-color", newColor);
-		}
-	
-		var updateEndColor = function(){
-			var newColor = app.voltageScale.getColor(this.parent.endNode.voltage.value.element);
-			this.element = newColor;
-			endStop.attr("stop-color", newColor);
-		}
 		
-		startColor = new Hook(app.voltageScale.getColor(this.startNode.voltage.value.element), this, updateStartColor);
-		endColor = new Hook(app.voltageScale.getColor(this.endNode.voltage.value.element), this, updateEndColor);
 		
 	} else if(this.type === 'switch'){		
 		this.addDomObject = function(){
