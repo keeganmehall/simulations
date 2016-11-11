@@ -133,26 +133,26 @@ var ForcingFn = function(input){
 			//controlsDiv.appendChild(forcingFn.forcedQuan.addDisplay()); ////Add this later after preventing undisplayed quantities from displaying
 		}else if(type === 'sine'){
 			controlsDiv.appendChild(forcingFn.amplitude.addDisplay());
-			let span1 = document.createElement('span');
+			var span1 = document.createElement('span');
 			span1.innerHTML = '*sin(2&pi;';
 			span1.className = 'mt'
 			controlsDiv.appendChild(span1);
 			controlsDiv.appendChild(forcingFn.freq.addDisplay());
-			let span2 = document.createElement('span');
+			var span2 = document.createElement('span');
 			span2.innerHTML = '(';
 			span2.className = 'mt'
 			controlsDiv.appendChild(span2);
 			controlsDiv.appendChild(forcingFn.time.addDisplay());
-			let span3 = document.createElement('span');
+			var span3 = document.createElement('span');
 			span3.innerHTML = '+';
 			span3.className = 'mt'
 			controlsDiv.appendChild(span3);
 			controlsDiv.appendChild(forcingFn.phase.addDisplay());
-			let span4 = document.createElement('span');
+			var span4 = document.createElement('span');
 			span4.innerHTML = '))';
 			span4.className = 'mt'
 			controlsDiv.appendChild(span4);
-			let span5 = document.createElement('span');
+			var span5 = document.createElement('span');
 			span5.innerHTML = '+';
 			span5.className = 'mt'
 			controlsDiv.appendChild(span5);
