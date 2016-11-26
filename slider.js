@@ -59,7 +59,7 @@ var Slider = function(input){
 	
 	var updateSliderPos = function(){
 		handlePos = sliderScale.axisScale(quantity.value.element)
-		handle.style('transform', 'translate('+handlePos+'px,0px)');
+		handle.attr('x', 0.5 + handlePos);
 	}
 	
 	var sliderPosHook = new Hook(null, null, updateSliderPos);
